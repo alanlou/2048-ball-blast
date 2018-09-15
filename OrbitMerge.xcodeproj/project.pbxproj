@@ -7,27 +7,103 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19ADD4C0BD6E0185E12AC83B /* Pods_OrbitMerge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */; };
+		4E1531F721478A08007FB554 /* ComboNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1531F621478A08007FB554 /* ComboNode.swift */; };
+		4E1531FA21478FF6007FB554 /* truenoexbd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531F921478FF6007FB554 /* truenoexbd.otf */; };
+		4E1531FC21479005007FB554 /* truenoblk.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531FB21479004007FB554 /* truenoblk.otf */; };
+		4E1531FE21479010007FB554 /* truenorg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531FD21479010007FB554 /* truenorg.otf */; };
+		4E15320021479022007FB554 /* truenosbd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531FF21479022007FB554 /* truenosbd.otf */; };
+		4E1532022147902F007FB554 /* truenobd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1532012147902F007FB554 /* truenobd.otf */; };
+		4E153215214794B8007FB554 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E153203214794B3007FB554 /* Montserrat-Bold.ttf */; };
+		4E15321A214794B8007FB554 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E153208214794B4007FB554 /* Montserrat-Regular.ttf */; };
+		4E15321C214794B8007FB554 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E15320A214794B5007FB554 /* Montserrat-Thin.ttf */; };
+		4E15321D214794B8007FB554 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E15320B214794B5007FB554 /* Montserrat-Light.ttf */; };
+		4E153221214794B8007FB554 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E15320F214794B6007FB554 /* Montserrat-Medium.ttf */; };
+		4E153224214794B8007FB554 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E153212214794B7007FB554 /* Montserrat-Black.ttf */; };
+		4E153225214794B8007FB554 /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E153213214794B7007FB554 /* Montserrat-SemiBold.ttf */; };
+		4E153226214794B8007FB554 /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4E153214214794B8007FB554 /* Montserrat-ExtraBold.ttf */; };
+		4E1532642149D555007FB554 /* NewBestRibbonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1532632149D554007FB554 /* NewBestRibbonNode.swift */; };
+		4E1532662149D631007FB554 /* newBestScore.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E1532652149D631007FB554 /* newBestScore.wav */; };
+		4E15327C214A0BFF007FB554 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E15327B214A0BFF007FB554 /* gameOver.wav */; };
 		4E3014AF2133AB1200D74E84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014AE2133AB1200D74E84 /* AppDelegate.swift */; };
-		4E3014B12133AB1200D74E84 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014B02133AB1200D74E84 /* GameScene.sks */; };
-		4E3014B32133AB1200D74E84 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014B22133AB1200D74E84 /* Actions.sks */; };
 		4E3014B52133AB1200D74E84 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014B42133AB1200D74E84 /* GameScene.swift */; };
 		4E3014B72133AB1200D74E84 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014B62133AB1200D74E84 /* GameViewController.swift */; };
 		4E3014BA2133AB1200D74E84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014B82133AB1200D74E84 /* Main.storyboard */; };
 		4E3014BC2133AB1300D74E84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014BB2133AB1300D74E84 /* Assets.xcassets */; };
 		4E3014BF2133AB1300D74E84 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014BD2133AB1300D74E84 /* LaunchScreen.storyboard */; };
+		4E3014C92133ACA500D74E84 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014C82133ACA500D74E84 /* DefaultValues.swift */; };
+		4E3014CB2133ACAD00D74E84 /* MyUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014CA2133ACAD00D74E84 /* MyUtils.swift */; };
+		4E3014CD2133AE3700D74E84 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */; };
+		4E3014CF2133AEDD00D74E84 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014CE2133AEDD00D74E84 /* StoreScene.swift */; };
+		4E3014D12133AF3000D74E84 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D02133AF3000D74E84 /* IAPHelper.swift */; };
+		4E3014D42133AF3B00D74E84 /* IAPItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D22133AF3B00D74E84 /* IAPItem.swift */; };
+		4E3014D52133AF3B00D74E84 /* IAPProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D32133AF3B00D74E84 /* IAPProducts.swift */; };
+		4E3014D72133AF4E00D74E84 /* ShopSelectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */; };
+		4E3014D92133AF5500D74E84 /* StoreItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D82133AF5500D74E84 /* StoreItem.swift */; };
+		4E3014DB2133AF5B00D74E84 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */; };
+		4E3014DD2133AF6800D74E84 /* WatchVideoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */; };
+		4E3014DF2133B08400D74E84 /* BallNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DE2133B08400D74E84 /* BallNode.swift */; };
+		4E3014E12133B08900D74E84 /* ControlButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E02133B08900D74E84 /* ControlButtonNode.swift */; };
+		4E3014E32133B09B00D74E84 /* MessageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E22133B09A00D74E84 /* MessageNode.swift */; };
+		4E3014E52133B0AB00D74E84 /* ZLSpriteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E42133B0AB00D74E84 /* ZLSpriteNode.swift */; };
+		4E3014E72133B0B700D74E84 /* CoinNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E62133B0B700D74E84 /* CoinNode.swift */; };
+		4E3014E92133B2C700D74E84 /* MenuButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E82133B2C700D74E84 /* MenuButtonNode.swift */; };
+		4E3014EC2133B3AE00D74E84 /* buttonPressed.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */; };
+		4E3014EE2133B4C400D74E84 /* BallItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014ED2133B4C300D74E84 /* BallItem.swift */; };
+		4E3014F02133B6E800D74E84 /* AdsVideoNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014EF2133B6E700D74E84 /* AdsVideoNode.swift */; };
+		4E5E537A2146436A0033A4E2 /* TopBarNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E53792146436A0033A4E2 /* TopBarNode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		08098BF5255380A378D827D4 /* Pods-OrbitMerge.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OrbitMerge.release.xcconfig"; path = "Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge.release.xcconfig"; sourceTree = "<group>"; };
+		4E1531F621478A08007FB554 /* ComboNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboNode.swift; sourceTree = "<group>"; };
+		4E1531F921478FF6007FB554 /* truenoexbd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenoexbd.otf; sourceTree = "<group>"; };
+		4E1531FB21479004007FB554 /* truenoblk.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenoblk.otf; sourceTree = "<group>"; };
+		4E1531FD21479010007FB554 /* truenorg.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenorg.otf; sourceTree = "<group>"; };
+		4E1531FF21479022007FB554 /* truenosbd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenosbd.otf; sourceTree = "<group>"; };
+		4E1532012147902F007FB554 /* truenobd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenobd.otf; sourceTree = "<group>"; };
+		4E153203214794B3007FB554 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
+		4E153208214794B4007FB554 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		4E15320A214794B5007FB554 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Thin.ttf"; sourceTree = "<group>"; };
+		4E15320B214794B5007FB554 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.ttf"; sourceTree = "<group>"; };
+		4E15320F214794B6007FB554 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
+		4E153212214794B7007FB554 /* Montserrat-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Black.ttf"; sourceTree = "<group>"; };
+		4E153213214794B7007FB554 /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
+		4E153214214794B8007FB554 /* Montserrat-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4E1532632149D554007FB554 /* NewBestRibbonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewBestRibbonNode.swift; sourceTree = "<group>"; };
+		4E1532652149D631007FB554 /* newBestScore.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = newBestScore.wav; sourceTree = "<group>"; };
+		4E15327B214A0BFF007FB554 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		4E3014AB2133AB1200D74E84 /* OrbitMerge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrbitMerge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E3014AE2133AB1200D74E84 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4E3014B02133AB1200D74E84 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		4E3014B22133AB1200D74E84 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		4E3014B42133AB1200D74E84 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		4E3014B62133AB1200D74E84 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		4E3014B92133AB1200D74E84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4E3014BB2133AB1300D74E84 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E3014BE2133AB1300D74E84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4E3014C02133AB1300D74E84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E3014C82133ACA500D74E84 /* DefaultValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
+		4E3014CA2133ACAD00D74E84 /* MyUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUtils.swift; sourceTree = "<group>"; };
+		4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4E3014CE2133AEDD00D74E84 /* StoreScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
+		4E3014D02133AF3000D74E84 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
+		4E3014D22133AF3B00D74E84 /* IAPItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPItem.swift; sourceTree = "<group>"; };
+		4E3014D32133AF3B00D74E84 /* IAPProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPProducts.swift; sourceTree = "<group>"; };
+		4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopSelectionItem.swift; sourceTree = "<group>"; };
+		4E3014D82133AF5500D74E84 /* StoreItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreItem.swift; sourceTree = "<group>"; };
+		4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreReviewHelper.swift; sourceTree = "<group>"; };
+		4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchVideoItem.swift; sourceTree = "<group>"; };
+		4E3014DE2133B08400D74E84 /* BallNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallNode.swift; sourceTree = "<group>"; };
+		4E3014E02133B08900D74E84 /* ControlButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControlButtonNode.swift; sourceTree = "<group>"; };
+		4E3014E22133B09A00D74E84 /* MessageNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageNode.swift; sourceTree = "<group>"; };
+		4E3014E42133B0AB00D74E84 /* ZLSpriteNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLSpriteNode.swift; sourceTree = "<group>"; };
+		4E3014E62133B0B700D74E84 /* CoinNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoinNode.swift; sourceTree = "<group>"; };
+		4E3014E82133B2C700D74E84 /* MenuButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuButtonNode.swift; sourceTree = "<group>"; };
+		4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonPressed.wav; sourceTree = "<group>"; };
+		4E3014ED2133B4C300D74E84 /* BallItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallItem.swift; sourceTree = "<group>"; };
+		4E3014EF2133B6E700D74E84 /* AdsVideoNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdsVideoNode.swift; sourceTree = "<group>"; };
+		4E5E53792146436A0033A4E2 /* TopBarNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBarNode.swift; sourceTree = "<group>"; };
+		D089478DAE2B57DA3B27FAFC /* Pods-OrbitMerge.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OrbitMerge.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge.debug.xcconfig"; sourceTree = "<group>"; };
+		F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OrbitMerge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,17 +111,57 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19ADD4C0BD6E0185E12AC83B /* Pods_OrbitMerge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		24A5C96FBB885DF255E2E88A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D089478DAE2B57DA3B27FAFC /* Pods-OrbitMerge.debug.xcconfig */,
+				08098BF5255380A378D827D4 /* Pods-OrbitMerge.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		2FB1ADF88A176C9214AA83B9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E1531F821478FA4007FB554 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				4E1531FD21479010007FB554 /* truenorg.otf */,
+				4E1531FF21479022007FB554 /* truenosbd.otf */,
+				4E1532012147902F007FB554 /* truenobd.otf */,
+				4E1531F921478FF6007FB554 /* truenoexbd.otf */,
+				4E1531FB21479004007FB554 /* truenoblk.otf */,
+				4E153212214794B7007FB554 /* Montserrat-Black.ttf */,
+				4E153203214794B3007FB554 /* Montserrat-Bold.ttf */,
+				4E153214214794B8007FB554 /* Montserrat-ExtraBold.ttf */,
+				4E15320B214794B5007FB554 /* Montserrat-Light.ttf */,
+				4E15320F214794B6007FB554 /* Montserrat-Medium.ttf */,
+				4E153208214794B4007FB554 /* Montserrat-Regular.ttf */,
+				4E153213214794B7007FB554 /* Montserrat-SemiBold.ttf */,
+				4E15320A214794B5007FB554 /* Montserrat-Thin.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		4E3014A22133AB1200D74E84 = {
 			isa = PBXGroup;
 			children = (
 				4E3014AD2133AB1200D74E84 /* OrbitMerge */,
 				4E3014AC2133AB1200D74E84 /* Products */,
+				24A5C96FBB885DF255E2E88A /* Pods */,
+				2FB1ADF88A176C9214AA83B9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,17 +176,65 @@
 		4E3014AD2133AB1200D74E84 /* OrbitMerge */ = {
 			isa = PBXGroup;
 			children = (
-				4E3014AE2133AB1200D74E84 /* AppDelegate.swift */,
-				4E3014B02133AB1200D74E84 /* GameScene.sks */,
-				4E3014B22133AB1200D74E84 /* Actions.sks */,
-				4E3014B42133AB1200D74E84 /* GameScene.swift */,
 				4E3014B62133AB1200D74E84 /* GameViewController.swift */,
-				4E3014B82133AB1200D74E84 /* Main.storyboard */,
+				4E3014B42133AB1200D74E84 /* GameScene.swift */,
+				4E3014CE2133AEDD00D74E84 /* StoreScene.swift */,
+				4E3014C62133AB3F00D74E84 /* Nodes */,
+				4E3014C72133AB4900D74E84 /* Misc */,
 				4E3014BB2133AB1300D74E84 /* Assets.xcassets */,
-				4E3014BD2133AB1300D74E84 /* LaunchScreen.storyboard */,
 				4E3014C02133AB1300D74E84 /* Info.plist */,
+				4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */,
 			);
 			path = OrbitMerge;
+			sourceTree = "<group>";
+		};
+		4E3014C62133AB3F00D74E84 /* Nodes */ = {
+			isa = PBXGroup;
+			children = (
+				4E3014EF2133B6E700D74E84 /* AdsVideoNode.swift */,
+				4E3014DE2133B08400D74E84 /* BallNode.swift */,
+				4E3014E62133B0B700D74E84 /* CoinNode.swift */,
+				4E1531F621478A08007FB554 /* ComboNode.swift */,
+				4E3014E02133B08900D74E84 /* ControlButtonNode.swift */,
+				4E3014E82133B2C700D74E84 /* MenuButtonNode.swift */,
+				4E3014E22133B09A00D74E84 /* MessageNode.swift */,
+				4E1532632149D554007FB554 /* NewBestRibbonNode.swift */,
+				4E5E53792146436A0033A4E2 /* TopBarNode.swift */,
+				4E3014E42133B0AB00D74E84 /* ZLSpriteNode.swift */,
+			);
+			path = Nodes;
+			sourceTree = "<group>";
+		};
+		4E3014C72133AB4900D74E84 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				4E3014C82133ACA500D74E84 /* DefaultValues.swift */,
+				4E3014CA2133ACAD00D74E84 /* MyUtils.swift */,
+				4E3014D02133AF3000D74E84 /* IAPHelper.swift */,
+				4E3014D32133AF3B00D74E84 /* IAPProducts.swift */,
+				4E3014ED2133B4C300D74E84 /* BallItem.swift */,
+				4E3014D82133AF5500D74E84 /* StoreItem.swift */,
+				4E3014D22133AF3B00D74E84 /* IAPItem.swift */,
+				4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */,
+				4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */,
+				4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */,
+				4E3014AE2133AB1200D74E84 /* AppDelegate.swift */,
+				4E3014B82133AB1200D74E84 /* Main.storyboard */,
+				4E3014BD2133AB1300D74E84 /* LaunchScreen.storyboard */,
+				4E1531F821478FA4007FB554 /* Fonts */,
+				4E3014EA2133B38F00D74E84 /* Sound */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
+		4E3014EA2133B38F00D74E84 /* Sound */ = {
+			isa = PBXGroup;
+			children = (
+				4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */,
+				4E1532652149D631007FB554 /* newBestScore.wav */,
+				4E15327B214A0BFF007FB554 /* gameOver.wav */,
+			);
+			path = Sound;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,9 +244,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4E3014C32133AB1300D74E84 /* Build configuration list for PBXNativeTarget "OrbitMerge" */;
 			buildPhases = (
+				4B11C66298BB2B98514C6167 /* [CP] Check Pods Manifest.lock */,
 				4E3014A72133AB1200D74E84 /* Sources */,
 				4E3014A82133AB1200D74E84 /* Frameworks */,
 				4E3014A92133AB1200D74E84 /* Resources */,
+				96BE5EB9349B67A5364998B3 /* [CP] Embed Pods Frameworks */,
+				8BCCE6327B5B6982E7837B5F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -131,15 +298,89 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E15321A214794B8007FB554 /* Montserrat-Regular.ttf in Resources */,
+				4E1532662149D631007FB554 /* newBestScore.wav in Resources */,
+				4E1532022147902F007FB554 /* truenobd.otf in Resources */,
+				4E1531FC21479005007FB554 /* truenoblk.otf in Resources */,
+				4E153226214794B8007FB554 /* Montserrat-ExtraBold.ttf in Resources */,
+				4E1531FE21479010007FB554 /* truenorg.otf in Resources */,
+				4E153225214794B8007FB554 /* Montserrat-SemiBold.ttf in Resources */,
+				4E15320021479022007FB554 /* truenosbd.otf in Resources */,
 				4E3014BA2133AB1200D74E84 /* Main.storyboard in Resources */,
-				4E3014B12133AB1200D74E84 /* GameScene.sks in Resources */,
+				4E3014CD2133AE3700D74E84 /* GoogleService-Info.plist in Resources */,
+				4E15321C214794B8007FB554 /* Montserrat-Thin.ttf in Resources */,
 				4E3014BC2133AB1300D74E84 /* Assets.xcassets in Resources */,
 				4E3014BF2133AB1300D74E84 /* LaunchScreen.storyboard in Resources */,
-				4E3014B32133AB1200D74E84 /* Actions.sks in Resources */,
+				4E153224214794B8007FB554 /* Montserrat-Black.ttf in Resources */,
+				4E15327C214A0BFF007FB554 /* gameOver.wav in Resources */,
+				4E3014EC2133B3AE00D74E84 /* buttonPressed.wav in Resources */,
+				4E153215214794B8007FB554 /* Montserrat-Bold.ttf in Resources */,
+				4E15321D214794B8007FB554 /* Montserrat-Light.ttf in Resources */,
+				4E1531FA21478FF6007FB554 /* truenoexbd.otf in Resources */,
+				4E153221214794B8007FB554 /* Montserrat-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4B11C66298BB2B98514C6167 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OrbitMerge-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8BCCE6327B5B6982E7837B5F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInAppMessaging/InAppMessagingResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InAppMessagingResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		96BE5EB9349B67A5364998B3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4E3014A72133AB1200D74E84 /* Sources */ = {
@@ -147,8 +388,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E3014B52133AB1200D74E84 /* GameScene.swift in Sources */,
+				4E3014E92133B2C700D74E84 /* MenuButtonNode.swift in Sources */,
+				4E3014D72133AF4E00D74E84 /* ShopSelectionItem.swift in Sources */,
+				4E3014D42133AF3B00D74E84 /* IAPItem.swift in Sources */,
+				4E3014CB2133ACAD00D74E84 /* MyUtils.swift in Sources */,
+				4E3014CF2133AEDD00D74E84 /* StoreScene.swift in Sources */,
+				4E3014DB2133AF5B00D74E84 /* StoreReviewHelper.swift in Sources */,
+				4E3014EE2133B4C400D74E84 /* BallItem.swift in Sources */,
+				4E3014E72133B0B700D74E84 /* CoinNode.swift in Sources */,
+				4E3014E12133B08900D74E84 /* ControlButtonNode.swift in Sources */,
+				4E3014E52133B0AB00D74E84 /* ZLSpriteNode.swift in Sources */,
+				4E3014E32133B09B00D74E84 /* MessageNode.swift in Sources */,
+				4E3014DF2133B08400D74E84 /* BallNode.swift in Sources */,
+				4E3014D52133AF3B00D74E84 /* IAPProducts.swift in Sources */,
+				4E3014F02133B6E800D74E84 /* AdsVideoNode.swift in Sources */,
 				4E3014B72133AB1200D74E84 /* GameViewController.swift in Sources */,
+				4E3014DD2133AF6800D74E84 /* WatchVideoItem.swift in Sources */,
 				4E3014AF2133AB1200D74E84 /* AppDelegate.swift in Sources */,
+				4E3014D12133AF3000D74E84 /* IAPHelper.swift in Sources */,
+				4E3014C92133ACA500D74E84 /* DefaultValues.swift in Sources */,
+				4E1532642149D555007FB554 /* NewBestRibbonNode.swift in Sources */,
+				4E3014D92133AF5500D74E84 /* StoreItem.swift in Sources */,
+				4E5E537A2146436A0033A4E2 /* TopBarNode.swift in Sources */,
+				4E1531F721478A08007FB554 /* ComboNode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,11 +552,13 @@
 		};
 		4E3014C42133AB1300D74E84 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D089478DAE2B57DA3B27FAFC /* Pods-OrbitMerge.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E3TBSL5F4P;
 				INFOPLIST_FILE = OrbitMerge/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -308,11 +572,13 @@
 		};
 		4E3014C52133AB1300D74E84 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08098BF5255380A378D827D4 /* Pods-OrbitMerge.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E3TBSL5F4P;
 				INFOPLIST_FILE = OrbitMerge/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
