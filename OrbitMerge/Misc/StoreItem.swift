@@ -1,6 +1,6 @@
 //
 //  StoreItem.swift
-//  Bouncing
+//  OrbitMerge
 //
 //  Created by Alan Lou on 2/13/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -9,28 +9,28 @@
 import SpriteKit
 
 protocol StoreItemDelegate: NSObjectProtocol {
-    func ballWasSelected(sender: StoreItem)
+    func modeWasSelected(sender: StoreItem)
 }
 
 class StoreItem: SKSpriteNode {
     
     weak var storeItemDelegate: StoreItemDelegate?
-    let ballNode: SKSpriteNode
     
     var identifier: String = ""
-    var thisBallColor: UIColor = ColorCategory.InitialBallColor
-    var isThisBought: Bool = false
-    var isAnimating: Bool = false
+    private var isThisBought: Bool = false
     
-    let ballWidth: CGFloat
+    private let inUseNode = MessageNode(message: "IN USE", fontName: FontNameType.Montserrat_SemiBold)
+    
     let cellSize: CGSize
     
     //MARK:- Initialization
-    init(color: SKColor, frameSize: CGSize, ballWidth: CGFloat) {
-        self.ballWidth =  ballWidth
-        cellSize = frameSize
-        ballNode = SKSpriteNode(texture: SKTexture(imageNamed: "Ball"), color: .clear, size: CGSize(width:ballWidth, height:ballWidth))
-        super.init(texture: nil, color: color, size: frameSize)
+    init(frameWidth: CGFloat) {
+        let texture = SKTexture(imageNamed: "ModeBackground")
+        cellSize = CGSize(width: frameWidth, height:texture.size().height*frameWidth/texture.size().width)
+        
+        super.init(texture: texture, color: .clear, size: cellSize)
+        self.colorBlendFactor = 1.0
+        
         self.isUserInteractionEnabled = false
     }
     
@@ -40,7 +40,13 @@ class StoreItem: SKSpriteNode {
     
     //MARK:- Helper Functions
     func setupStoreItem(as identifier: String) {
+        
         self.identifier = identifier
+        
+        // clear view
+        for child in self.children {
+            child.removeFromParent()
+        }
         
         // error case
         if  UserDefaults.standard.object(forKey: identifier) == nil {
@@ -48,132 +54,133 @@ class StoreItem: SKSpriteNode {
         }
         
         let decoded  = UserDefaults.standard.object(forKey: identifier) as! Data
-        let theBallItem = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! BallItem
-        thisBallColor = theBallItem.color
-        isThisBought = theBallItem.isBought
+        let theModeItem = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! ModeItem
+        isThisBought = theModeItem.isBought
         
+        // set up color
+        self.color = ColorCategory.getBarBottomColor(mode: identifier)
+        
+        // add inner layer
+        let innerSection = SKSpriteNode(texture: SKTexture(imageNamed: "ModeBackground"),
+                                        color: ColorCategory.getBackgroundColor(mode: identifier),
+                                        size: CGSize(width: cellSize.width*0.990, height:cellSize.height*0.970))
+        innerSection.colorBlendFactor = 1.0
+        innerSection.zPosition = 20
+        innerSection.position = CGPoint.zero
+        self.addChild(innerSection)
+        
+        // add mode title node
+        let buttonWidth = self.size.width*0.27
+        let xPosition = -self.size.width*0.3
+        let yPosition = cellSize.height*0.25
+        
+        let buttonAbove = ZLSpriteNode(width: buttonWidth, image: "ModeTitle", color: ColorCategory.getBarTopColor(mode: identifier))
+        buttonAbove.position = CGPoint(x: xPosition, y: yPosition)
+        buttonAbove.zPosition = 22
+        self.addChild(buttonAbove)
+        
+        let buttonBelow = ZLSpriteNode(width: buttonWidth, image: "ModeTitle", color: ColorCategory.getBarBottomColor(mode: identifier))
+        buttonBelow.position = CGPoint(x: xPosition, y: yPosition-buttonAbove.size.height*0.08)
+        buttonBelow.zPosition = 21
+        self.addChild(buttonBelow)
+        
+        // add mode title text
+        let modeTitleNode = MessageNode(message: "simple", fontName: FontNameType.Montserrat_SemiBold)
+        modeTitleNode.setFontColor(color: ColorCategory.getMenuIconColor(mode: identifier))
+        let modeTitleNodeWidth = buttonWidth*0.8
+        let modeTitleNodeHeight = buttonAbove.size.height*0.50
+        let modeTitleNodeFrame = CGRect(x: -modeTitleNodeWidth*0.50,
+                                         y: -modeTitleNodeHeight*0.50,
+                                         width: modeTitleNodeWidth,
+                                         height: modeTitleNodeHeight)
+        modeTitleNode.adjustLabelFontSizeToFitRect(rect: modeTitleNodeFrame)
+        modeTitleNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.center)
+        modeTitleNode.zPosition = 23
+        modeTitleNode.setText(to: identifier)
+        buttonAbove.addChild(modeTitleNode)
+        
+        // add color ball nodes
+        let leftAndRightPadding = cellSize.width*0.5-cellSize.width*0.445
+        let horizontalDistance = (self.size.width-2.0*leftAndRightPadding)/11.0
+        let ballWidth = horizontalDistance*0.9
+        
+        for i in 1 ..< 12 {
+            let colorBallNode = ZLSpriteNode(width: ballWidth, image: "CircleArea", color: ColorCategory.getBallColor(index: i, mode: identifier))
+            let currXPosition = leftAndRightPadding-ballWidth*CGFloat(0.5)+horizontalDistance*CGFloat(i)-self.size.width*0.5
+            let currYPosition = -ballWidth*0.7
+            colorBallNode.position = CGPoint(x: currXPosition, y: currYPosition)
+            colorBallNode.zPosition = CGFloat(100.0)+CGFloat(i)
+            self.addChild(colorBallNode)
+        }
         
         if isThisBought {
-            // clear content view first (in case there's lock view in place)
-            self.removeAllChildren()
-            
-            ballNode.colorBlendFactor = 1.0
-            ballNode.color = thisBallColor
-            ballNode.position = CGPoint(x:0.0, y:0.0)
-            self.addChild(ballNode)
             
             return
         }
         
-        // Facebook -> 3
-        if identifier == "Ball3" {
-            // Set facebook node
-            let lockNode = SKSpriteNode(texture: SKTexture(imageNamed: "Facebook"), color: .clear, size: CGSize(width:ballWidth*1.8, height:ballWidth*1.7))
-            lockNode.position = CGPoint(x:0.0, y:lockNode.size.height/2)
-            lockNode.color = .white
-            lockNode.colorBlendFactor = 1.0
-            self.addChild(lockNode)
-            
-            // Add Coin Node & label
-            let coinNumberNode = MessageNode(message: "FREE!")
-            coinNumberNode.setFontColor(color: .white)
-            let coinNumberNodeWidth = cellSize.width*0.6
-            let coinNumberNodeHeight = ballWidth+4
-            let coinNumberNodeFrame = CGRect(x: -cellSize.width*0.30,
-                                             y: -cellSize.height*0.2-coinNumberNodeHeight/2,
-                                             width: coinNumberNodeWidth,
-                                             height: coinNumberNodeHeight)
-            coinNumberNode.adjustLabelFontSizeToFitRect(rect: coinNumberNodeFrame)
-            coinNumberNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.center)
-            //debugDrawArea(rect: coinNumberNodeFrame)
-            self.addChild(coinNumberNode)
-            return
-        }
-        
-        // Twitter -> 4
-        if identifier == "Ball4" {
-            // Set twitter node
-            let lockNode = SKSpriteNode(texture: SKTexture(imageNamed: "Twitter"), color: .clear, size: CGSize(width:ballWidth*1.9, height:ballWidth*1.8))
-            lockNode.position = CGPoint(x:0.0, y:lockNode.size.height/2)
-            lockNode.color = .white
-            lockNode.colorBlendFactor = 1.0
-            self.addChild(lockNode)
-            
-            // Add Coin Node & label
-            let coinNumberNode = MessageNode(message: "FREE!")
-            coinNumberNode.setFontColor(color: .white)
-            let coinNumberNodeWidth = cellSize.width*0.6
-            let coinNumberNodeHeight = ballWidth+4
-            let coinNumberNodeFrame = CGRect(x: -cellSize.width*0.30,
-                                             y: -cellSize.height*0.2-coinNumberNodeHeight/2,
-                                             width: coinNumberNodeWidth,
-                                             height: coinNumberNodeHeight)
-            coinNumberNode.adjustLabelFontSizeToFitRect(rect: coinNumberNodeFrame)
-            coinNumberNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.center)
-            //debugDrawArea(rect: coinNumberNodeFrame)
-            self.addChild(coinNumberNode)
-            return
-        }
-        
-        // otherwise, still locked
-        // Set lock view
-        let lockNode = SKSpriteNode(texture: SKTexture(imageNamed: "Lock"), color: .clear, size: CGSize(width:ballWidth*2.0, height:ballWidth*1.7))
-        lockNode.color = .white
-        lockNode.colorBlendFactor = 1.0
-        lockNode.position = CGPoint(x:0.0, y:lockNode.size.height/2)
-        self.addChild(lockNode)
+        // otherwise, not bought
         
         // Add Coin Node & label
-        let coinNode = CoinNode(color: ColorCategory.InitialBallColor, width: ballWidth)
-        coinNode.anchorPoint = CGPoint(x:0.0, y:0.5)
-        coinNode.position = CGPoint(x: cellSize.width*0.15, y:-cellSize.height*0.2)
-        self.addChild(coinNode)
-        
         let coinNumber = 100
-        let coinNumberNode = MessageNode(message: "\(coinNumber)")
-        coinNumberNode.setFontColor(color: .white)
-        let coinNumberNodeWidth = cellSize.width*0.55
-        let coinNumberNodeHeight = coinNode.size.height+4
-        let coinNumberNodeFrame = CGRect(x: -cellSize.width*0.45,
-                                         y: -cellSize.height*0.2-coinNumberNodeHeight/2,
+        let coinNumberNode = MessageNode(message: "\(coinNumber)", fontName: FontNameType.Montserrat_SemiBold)
+        coinNumberNode.setFontColor(color: ColorCategory.getTextFontColor(mode: identifier))
+        let coinNumberNodeWidth = cellSize.width*0.445-leftAndRightPadding
+        let coinNumberNodeHeight = cellSize.height*0.11
+        let coinNumberNodeFrame = CGRect(x: 0.0,
+                                         y: buttonAbove.frame.midY-coinNumberNodeHeight*0.5,
                                          width: coinNumberNodeWidth,
                                          height: coinNumberNodeHeight)
         coinNumberNode.adjustLabelFontSizeToFitRect(rect: coinNumberNodeFrame)
         coinNumberNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.right)
+        coinNumberNode.zPosition = 1000
         //debugDrawArea(rect: coinNumberNodeFrame)
         self.addChild(coinNumberNode)
+        
+        let coinNode = CoinNode(width: cellSize.height*0.13)
+        coinNode.anchorPoint = CGPoint(x:1.0, y:0.5)
+        coinNode.position = CGPoint(x: cellSize.width*0.5-leftAndRightPadding, y:buttonAbove.frame.midY)
+        coinNode.zPosition = 1000
+        self.addChild(coinNode)
+        
     }
     
     func setFrameToThisItem() {
-        isAnimating = true
-        // animate
-        let wait = SKAction.wait(forDuration: 1.0)
-        let scaleUp = SKAction.scale(to: 1.2, duration: 0.4)
-        let scaleDown = SKAction.scale(to: 1.0, duration: 0.2)
-        scaleUp.timingMode = .easeOut
-        scaleDown.timingMode = .easeOut
-        let scaleAction = SKAction.sequence([wait,scaleUp,scaleDown])
-        
-        ballNode.run(SKAction.repeatForever(scaleAction))
+        inUseNode.setFontColor(color: ColorCategory.getBallColor(index: 2, mode: identifier))
+        let inUseNodeNodeWidth = cellSize.width*0.445
+        let inUseNodeNodeHeight = cellSize.height*0.10
+        let inUseNodeNodeFrame = CGRect(x: 0.0,
+                                         y: cellSize.height*0.25-inUseNodeNodeHeight*0.5,
+                                         width: inUseNodeNodeWidth,
+                                         height: inUseNodeNodeHeight)
+        inUseNode.adjustLabelFontSizeToFitRect(rect: inUseNodeNodeFrame)
+        inUseNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.right)
+        inUseNode.zPosition = 1000
+        self.addChild(inUseNode)
+    }
+    
+    
+    func removeInUseLabel() {
+        inUseNode.removeFromParent()
     }
     
     // MARK:- Helper Function
     func getTouched() {
         if let storeItemDelegate = storeItemDelegate {
-            storeItemDelegate.ballWasSelected(sender: self)
+            storeItemDelegate.modeWasSelected(sender: self)
         }
     }
     
-    func getStoreItem() -> BallItem {
+    func getStoreItem() -> ModeItem {
         let decoded  = UserDefaults.standard.object(forKey: identifier) as! Data
-        let theBallItem = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! BallItem
-        return theBallItem
+        let theModeItem = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! ModeItem
+        return theModeItem
     }
     
     func debugDrawArea(rect drawRect: CGRect) {
         let shape = SKShapeNode(rect: drawRect)
         shape.strokeColor = SKColor.red
         shape.lineWidth = 2.0
+        shape.zPosition = 10000
         self.addChild(shape)
     }
 }

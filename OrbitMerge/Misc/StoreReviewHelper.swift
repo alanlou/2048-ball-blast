@@ -1,6 +1,6 @@
 //
 //  StoreReviewHelper.swift
-//  Squares
+//  OrbitMerge
 //
 //  Created by Alan Lou on 1/31/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -53,7 +53,7 @@ struct StoreReviewHelper {
         }
         
         switch appOpenCount {
-        case 7,20:
+        case 8,20:
             return true
         case _ where appOpenCount%40 == 0 :
             return true

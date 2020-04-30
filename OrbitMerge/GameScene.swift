@@ -6,12 +6,13 @@
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
 //
 
+import AudioToolbox
 import SpriteKit
+import Firebase
 import GameKit
 import Photos
-import Firebase
 
-class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
+class GameScene: SKScene, Alertable, MenuButtonDelegate {
     
     // super node containing the gamelayer and pauselayer
     private let gameLayer = SKNode()
@@ -31,8 +32,13 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     private var arrowHeadNode: ZLSpriteNode
     private var arrowDotsNode: ZLSpriteNode
     private var topBarNode: TopBarNode
+    private var nextBallButton: MenuButtonNode
+    private var settingButton: MenuButtonNode
+    private var buttonBelow1: ZLSpriteNode
+    private var buttonBelow2: ZLSpriteNode
     private var newBestRibbon: NewBestRibbonNode?
     private let comboNode = ComboNode()
+    private var gameOverBallPos: Int?
     
     // variables
     private var postImage: UIImage?
@@ -44,12 +50,13 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     private var lastComboTime: TimeInterval = 0
     
     // booleans
-    private var isGameStart: Bool = false
     private var isGameOver: Bool = false
     private var isBestScore: Bool = false
     private var isGamePaused: Bool = false
+    private var isGameExitPaused: Bool = false
     private var isPhotoPermission: Bool = false
     private var isTappedEndSaveMe: Bool = false
+    private var isInCombo: Bool = false
     var isSaveMeAnOption: Bool = true
     var isAdReady: Bool = false
     var isFirstTimeOpening: Bool = false
@@ -60,6 +67,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     private var comboInc: Int = 0
     private var currMaxIndex: Int = 1
     private var mergeBallCount: Int = 0
+    private let universalWidth: CGFloat
     private let circleRadius: CGFloat
     private let ballWidth: CGFloat
     private let gameOverAngleDist: CGFloat
@@ -72,6 +80,20 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     // pre-load sound
     private let buttonPressedSound: SKAction = SKAction.playSoundFileNamed("buttonPressed.wav", waitForCompletion: false)
     private let gameOverSound: SKAction = SKAction.playSoundFileNamed("gameOver.wav", waitForCompletion: false)
+    private let gameStartSound: SKAction = SKAction.playSoundFileNamed("gameStart.wav", waitForCompletion: false)
+    private let ballHitCircleSound: SKAction = SKAction.playSoundFileNamed("ballHitCircle.wav", waitForCompletion: false)
+    private let ballShootSound: SKAction = SKAction.playSoundFileNamed("ballShoot.wav", waitForCompletion: false)
+    private let ballFailSound: SKAction = SKAction.playSoundFileNamed("ballFail.wav", waitForCompletion: false)
+    
+    private let matchSound1: SKAction = SKAction.playSoundFileNamed("Merge_matching_1.wav", waitForCompletion: false)
+    private let matchSound2: SKAction = SKAction.playSoundFileNamed("Merge_matching_2.wav", waitForCompletion: false)
+    private let matchSound3: SKAction = SKAction.playSoundFileNamed("Merge_matching_3.wav", waitForCompletion: false)
+    private let matchSound4: SKAction = SKAction.playSoundFileNamed("Merge_matching_4.wav", waitForCompletion: false)
+    private let matchSound5: SKAction = SKAction.playSoundFileNamed("Merge_matching_5.wav", waitForCompletion: false)
+    private let matchSound6: SKAction = SKAction.playSoundFileNamed("Merge_matching_6.wav", waitForCompletion: false)
+    private let matchSound7: SKAction = SKAction.playSoundFileNamed("Merge_matching_7.wav", waitForCompletion: false)
+    private let matchSound8: SKAction = SKAction.playSoundFileNamed("Merge_matching_8.wav", waitForCompletion: false)
+    private let matchSound9: SKAction = SKAction.playSoundFileNamed("Merge_matching_9.wav", waitForCompletion: false)
     
     
     // IAP Product
@@ -98,15 +120,26 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             UserDefaults.standard.set(newValue, forKey: "gameSoundOn")
         }
     }
-    private var gameMusicOn: Bool {
+    var coinNumber: Int {
         get {
-            if  UserDefaults.standard.object(forKey: "gameMusicOn") == nil {
-                UserDefaults.standard.set(true, forKey: "gameMusicOn")
+            if  UserDefaults.standard.object(forKey: "coinNumber") == nil {
+                UserDefaults.standard.set(0, forKey: "coinNumber")
             }
-            return UserDefaults.standard.bool(forKey: "gameMusicOn")
+            return UserDefaults.standard.integer(forKey: "coinNumber")
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "gameMusicOn")
+            UserDefaults.standard.set(newValue, forKey: "coinNumber")
+        }
+    }
+    private var vibrateOn: Bool {
+        get {
+            if  UserDefaults.standard.object(forKey: "vibrateOn") == nil {
+                UserDefaults.standard.set(true, forKey: "vibrateOn")
+            }
+            return UserDefaults.standard.bool(forKey: "vibrateOn")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "vibrateOn")
         }
     }
     private var bestScore: Int {
@@ -115,6 +148,23 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "highScore")
+        }
+    }
+    private var _highCombo: Int!
+    private var highCombo: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "highCombo")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "highCombo")
+        }
+    }
+    private var highBallNum: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "highBallNum")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "highBallNum")
         }
     }
     private var adsHeight: CGFloat {
@@ -127,17 +177,29 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     //MARK:- Initialization
     override init(size: CGSize) {
         // define numbers
-        circleRadius =  min(size.width, size.height*9.0/16.0)*0.5*0.85
+        universalWidth = min(size.width, size.height*9.0/16.0)
+        circleRadius =  universalWidth*0.40
         ballWidth = circleRadius * 0.190
         gameOverAngleDist = atan(ballWidth/circleRadius)
         
         // define nodes
-        circleNode = ZLSpriteNode(width: circleRadius*2.0, image: "Circle", color: ColorCategory.InitialBallColor.withAlphaComponent(0.5))
-        circleAreaNode = ZLSpriteNode(width: circleRadius*2.0, image: "CircleArea", color: ColorCategory.BallColor1.withAlphaComponent(0.5))
-        arrowHeadNode = ZLSpriteNode(height: ballWidth*0.4, image: "ArrowHead", color: ColorCategory.InitialBallColor.withAlphaComponent(0.5))
-        arrowDotsNode = ZLSpriteNode(height: ballWidth*0.2, image: "ArrowDots", color: ColorCategory.InitialBallColor.withAlphaComponent(0.5))
-        ballShadowNode = ZLSpriteNode(width: ballWidth*1.2, image: "Ball", color: ColorCategory.BallColor1)
-        topBarNode = TopBarNode(color: ColorCategory.getTopBarColor().withAlphaComponent(0.4), width: size.width, height: ballWidth*1.7)
+        circleNode = ZLSpriteNode(width: circleRadius*2.0, image: "Circle", color: ColorCategory.getLineColor().withAlphaComponent(0.5))
+        circleAreaNode = ZLSpriteNode(width: circleRadius*2.0, image: "CircleArea", color: ColorCategory.BallColor1_Simple.withAlphaComponent(0.5))
+        arrowHeadNode = ZLSpriteNode(height: ballWidth*0.4, image: "ArrowHead", color: ColorCategory.getLineColor().withAlphaComponent(0.5))
+        arrowDotsNode = ZLSpriteNode(height: ballWidth*0.2, image: "ArrowDots", color: ColorCategory.getLineColor().withAlphaComponent(0.5))
+        ballShadowNode = ZLSpriteNode(width: ballWidth*1.2, image: "Ball", color: ColorCategory.BallColor1_Simple)
+        topBarNode = TopBarNode(width: universalWidth*0.8)
+        let buttonWidth = topBarNode.size.height*0.7
+        nextBallButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                        buttonType: ButtonType.MenuButton,
+                                        iconType: IconType.NoButton,
+                                        width: buttonWidth)
+        settingButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                       buttonType: ButtonType.MenuButton,
+                                       iconType: IconType.SettingButton,
+                                       width: buttonWidth)
+        buttonBelow1 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
+        buttonBelow2 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
         
         super.init(size: size)
     }
@@ -165,6 +227,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                               width: size.width-safeSets.right-safeSets.left,
                               height: size.height-safeSets.top-safeSets.bottom)
         bottomSafeSets = safeSets.bottom
+        _highCombo = highCombo
         
         /*** set up game layer ***/
         gameLayer.position = CGPoint(x: 0.0, y: bottomSafeSets)
@@ -174,21 +237,14 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         /*** set up pause layer ***/
         setUpPauseLayer()
         
-        /*** set up pause button node ***/
-        let pauseButtonNode = ControlButtonNode(color: ColorCategory.getControlButtonColor(), width: ballWidth*0.9, controlButtonType: ControlButtonType.PauseButton)
-        pauseButtonNode.buttonDelegate = self
-        pauseButtonNode.anchorPoint = CGPoint(x:0.0, y:1.0)
-        pauseButtonNode.position = CGPoint(x:0, y:safeAreaRect.height)
-        pauseButtonNode.alpha = 1.0
-        pauseButtonNode.name = "pauseButtonNode"
-        gameLayer.addChild(pauseButtonNode)
-        
         /*** set up top bar node ***/
-        topBarNode.position = CGPoint(x:safeAreaRect.width*0.5, y: safeAreaRect.height-pauseButtonNode.size.height*1.5/2.0)
         topBarNode.anchorPoint = CGPoint(x:0.5, y:1.0)
+        topBarNode.position = CGPoint(x:safeAreaRect.width*0.5, y: safeAreaRect.height*0.9+topBarNode.size.height*0.5)
         gameLayer.addChild(topBarNode)
-        
         setUpTopBarNode()
+        
+        /*** set up pause button node ***/
+        setUpButtonNodes()
         
         /*** set up center node ***/
         centerNode.position = CGPoint(x: safeAreaRect.width*0.5, y: (adsHeight+topBarNode.frame.minY)*0.5)
@@ -205,6 +261,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         /*** set up circle node ***/
         circleNode.position = CGPoint.zero
         circleNode.zPosition = 1
+        circleNode.name = "circle"
         centerNode.addChild(circleNode)
         
         /*** set up circle area node ***/
@@ -222,6 +279,16 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         /*** spawn init ball ***/
         spawnInitBall()
         
+        
+        /*** add pause notification receiver ***/
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationWillResignActive),
+                                               name: UIApplication.willResignActiveNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationDidBecomeActive),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
     }
     
     // MARK:- Touch Events
@@ -231,26 +298,26 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         let touch = touches.first
         let touchPosition = touch!.location(in: self)
         
-        if self.currBallNode != nil && !isGameOver {
+        if self.currBallNode != nil && !isGameOver && !isGamePaused {
             initialTouchPos = touchPosition
         }
         
         // save me
         if isGameOver && isTappedEndSaveMe {
             let touchedNode = self.atPoint(touchPosition)
-            print("TOUCH SAVE TOUCH SAVE!")
             if let name = touchedNode.name {
                 // Game Over
                 if name != "circle" && name != "saveMeComponent" {
                     gameOver()
                 } else {
-                    print("HEYHEYHEY! ONE MORE LIFE!")
                     NotificationCenter.default.post(name: Notification.Name(rawValue: "runRewardAds"), object: nil)
                     disableAdsSaveMe()
+                    
                     // stop count down
                     centerNode.removeAllActions()
                 }
                 isTappedEndSaveMe = false
+                
             } else {
                 gameOver()
                 isTappedEndSaveMe = false
@@ -355,6 +422,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     
     // MARK:- Game Logic
     func spawnInitBall() {
+        
+        if gameSoundOn {
+            let wait = SKAction.wait(forDuration: 0.1)
+            self.run(SKAction.sequence([wait,gameStartSound]))
+        }
+        
         // define ball on circle
         let initBallNode = BallNode(width: ballWidth, index: 1)
         
@@ -385,18 +458,17 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         expandCircleArea(color: centerBallNode.getColor())
         
         // define upper left ball node
-        let upperLeftBallNode = BallNode(width: ballWidth*0.75, index: 1)
+        let upperLeftBallNode = BallNode(width: nextBallButton.size.width*0.45, index: 1)
         upperLeftBallNode.zPosition = 10
-        upperLeftBallNode.position = CGPoint(x: -safeAreaRect.width*CGFloat(0.5)+CGFloat(7.0)+ballWidth*CGFloat(0.375),
-                                             y: -topBarNode.size.height*CGFloat(1.15)-CGFloat(10.0)-ballWidth*CGFloat(0.375))
+        upperLeftBallNode.position = CGPoint(x: 0.0,
+                                             y: -nextBallButton.size.height*0.10)
         upperLeftBallNode.setScale(0.0)
         upperLeftBallNode.alpha = 1.0
-        topBarNode.addChild(upperLeftBallNode)
+        nextBallButton.addChild(upperLeftBallNode)
         self.nextBallNode = upperLeftBallNode
         
         upperLeftBallNode.run(SKAction.sequence([scaleUp,scaleDown,scaleBack]))
         
-        self.isGameStart = true
     }
     
     func shootBall(shootingAngle: CGFloat) {
@@ -409,6 +481,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         guard let currBallNode = self.currBallNode else {
             return
         }
+        
         self.currBallNode = nil
         
         // define numbers
@@ -429,6 +502,15 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             self?.updateBallsArray(newBallNode: currBallNode)
             currBallNode.run(SKAction.sequence([scaleDown,scaleBack]))
         })
+        
+        
+        // play sound
+        if gameSoundOn {
+            let wait = SKAction.wait(forDuration: 0.1)
+            self.run(ballShootSound)
+            self.run(SKAction.sequence([wait,ballHitCircleSound]))
+        }
+        
         
         // pause top bar combo countdown node
         pauseComboCountdown()
@@ -474,12 +556,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         self.currBallNode = centerBallNode
         
         // define upper left ball node
-        let upperLeftBallNode = BallNode(width: ballWidth*0.75, index: ballIndex)
+        let upperLeftBallNode = BallNode(width: nextBallButton.size.width*0.45, index: ballIndex)
         upperLeftBallNode.zPosition = 10
-        upperLeftBallNode.position = CGPoint(x: -safeAreaRect.width*CGFloat(0.5)+CGFloat(7.0)+ballWidth*CGFloat(0.375),
-                                             y: -topBarNode.size.height*CGFloat(1.15)-CGFloat(10.0)-ballWidth*CGFloat(0.375))
+        upperLeftBallNode.position = CGPoint(x: 0.0,
+                                             y: -nextBallButton.size.height*0.10)
         upperLeftBallNode.alpha = 1.0
-        topBarNode.addChild(upperLeftBallNode)
+        nextBallButton.addChild(upperLeftBallNode)
         
         nextBallNode.removeFromParent()
         self.nextBallNode = upperLeftBallNode
@@ -507,19 +589,23 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         
         var rotationAngleBefore: CGFloat  = -10.0
         var rotationAngleAfter: CGFloat = -10.0
+        var insertPos: Int = -1
         
         if ballArray.count == 0 {
             // case 1. if the circle is empty, just insert it
+            insertPos = 0
             ballArray.insert(newBallNode, at: 0)
         } else if newRotationAngle < ballArray[0].getRotationAngle() {
             // case 2. insert at beginning
             rotationAngleAfter = ballArray[0].getRotationAngle()
             // insert ball
+            insertPos = 0
             ballArray.insert(newBallNode, at: 0)
         } else if newRotationAngle >= ballArray[ballArray.count-1].getRotationAngle() {
             // case 3. insert at end
             rotationAngleBefore = ballArray[ballArray.count-1].getRotationAngle()
             // insert ball
+            insertPos = ballArray.count
             ballArray.insert(newBallNode, at: ballArray.count)
         } else {
             for iterCount in 0..<ballArray.count-1 {
@@ -529,6 +615,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                     rotationAngleBefore = ballArray[iterCount].getRotationAngle()
                     rotationAngleAfter = ballArray[iterCount+1].getRotationAngle()
                     // insert ball
+                    insertPos = iterCount+1
                     ballArray.insert(newBallNode, at: iterCount+1)
                     break
                 }
@@ -549,6 +636,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             let firstAction = SKAction.sequence([scaleDown,scaleUp,scaleBack])
             
             centerNode.run(firstAction, completion: {[weak self] in
+                self?.gameOverBallPos = insertPos
                 self?.promptAdSaveMe()
             })
             
@@ -950,9 +1038,23 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     func setComboNumber(to comboNum: Int) {
         self.combo = comboNum
         self.comboNode.setCombo(to: comboNum)
+        
+        // update high combo
+        if combo > _highCombo {
+            highCombo = combo
+        }
     }
     
     func promptAdSaveMe() {
+        
+        if gameSoundOn {
+            self.run(ballFailSound)
+        }
+        
+        // vibrate
+        if vibrateOn {
+            AudioServicesPlaySystemSound(1521) // Actuate "Peek" feedback (weak boom)
+        }
         
         // deactivate top bar
         for child in topBarNode.children {
@@ -961,6 +1063,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         
         if !isGameOver {
             isGameOver = true
+            
             if isAdReady, isSaveMeAnOption {
                 self.askSaveMe()
             } else {
@@ -972,12 +1075,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     
     // run before game over
     func askSaveMe() {
-        print("askSaveMe")
+        //print("askSaveMe")
         isSaveMeAnOption = false
         
         // add saveMeLayer
-        saveMeLayer.position = gameLayer.position
-        self.addChild(saveMeLayer)
+        saveMeLayer.position = CGPoint.zero//gameLayer.position
+        centerNode.addChild(saveMeLayer)
         
         // set up tap message node
         let saveMeNode = MessageNode(message: "Save Me?", fontName: FontNameType.Montserrat_SemiBold)
@@ -990,7 +1093,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         saveMeNode.adjustLabelFontSizeToFitRect(rect: saveMeNodeFrame)
         saveMeNode.name = "saveMeComponent"
         //debugDrawArea(rect: messageNodeFrame)
-        centerNode.addChild(saveMeNode)
+        saveMeLayer.addChild(saveMeNode)
         
         // set up levelTimerLabel
         let levelTimerLabelWidth = circleRadius*0.5
@@ -1002,22 +1105,20 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         levelTimerLabel.adjustLabelFontSizeToFitRect(rect: levelTimerLabelFrame)
         levelTimerLabel.name = "saveMeComponent"
         //debugDrawArea(rect: messageNodeFrame)
-        centerNode.addChild(levelTimerLabel)
+        saveMeLayer.addChild(levelTimerLabel)
         
         // Ads Video
-        let adsVideoNode = AdsVideoNode(color: ColorCategory.getMessageFontColor(), height: circleRadius*0.28)
+        let adsVideoNode = AdsVideoNode(color: ColorCategory.getTextFontColor(), height: circleRadius*0.28)
         adsVideoNode.position = CGPoint(x:0.0, y:-circleRadius/5-circleRadius*0.32)
         adsVideoNode.name = "saveMeComponent"
         adsVideoNode.zPosition = 10000
-        centerNode.addChild(adsVideoNode)
+        saveMeLayer.addChild(adsVideoNode)
         //print(adsVideoNode)
         
         
         // animate
-        let scaleDown = SKAction.scale(to: 0.5, duration: 0.2)
         let scaleUp = SKAction.scale(to: 0.73, duration: 0.2)
         let scaleBack = SKAction.scale(to: 0.6, duration: 0.1)
-        scaleDown.timingMode = .easeOut
         
         let wait = SKAction.wait(forDuration: 1.0) //change countdown speed here
         let block = SKAction.run({[unowned self] in
@@ -1046,7 +1147,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         gameLayer.addChild(tapToSkipTextNode)
         
         // animate tap to skip text node
-        let waitBetween = SKAction.wait(forDuration: 1.0)
+        let waitBetween = SKAction.wait(forDuration: 0.8)
         let fadeOut = SKAction.fadeOut(withDuration: 0.3)
         let fadeIn = SKAction.fadeIn(withDuration: 0.2)
         let actionSequence = SKAction.sequence([waitBetween,fadeOut,fadeIn])
@@ -1116,6 +1217,11 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         fadeOut.timingMode = .easeIn
         ballShadowNode.run(SKAction.sequence([scaleUp,fadeOut]))
         
+        // vibrate
+        if vibrateOn {
+            AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
+        }
+        
         // shake camera
         let shootAngle = ballNode.getRotationAngle()
         shakeCamera(layer: centerNode, direction: CGVector(dx: cos(shootAngle), dy: sin(shootAngle)), numberOfShakes: 1, magnitude: ballWidth*0.4)
@@ -1130,9 +1236,36 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         let currentComboTime = NSDate().timeIntervalSince1970
         if currentComboTime-lastComboTime < 1.0 {
             self.comboInc += 1
+            // play sound
+            if gameSoundOn {
+                switch self.comboInc {
+                case 0:
+                    break
+                case 1:
+                    self.run(matchSound2)
+                case 2:
+                    self.run(matchSound3)
+                case 3:
+                    self.run(matchSound4)
+                case 4:
+                    self.run(matchSound5)
+                case 5:
+                    self.run(matchSound6)
+                case 6:
+                    self.run(matchSound7)
+                case 7:
+                    self.run(matchSound8)
+                default:
+                    self.run(matchSound9)
+                    
+                }
+            }
             continueComboCountdown()
         } else {
             self.comboInc = 0
+            if gameSoundOn {
+                self.run(matchSound1)
+            }
         }
         
         // combo higher than previous one
@@ -1153,8 +1286,8 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         } else {
             mergeBallNumArray[ballNode.getIndex()-1] += 1
         }
-        print("YOYO")
-        print(mergeBallNumArray)
+        
+
     }
     
     func startComboCountdown(by ballNode: BallNode) {
@@ -1163,9 +1296,9 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             countDownNode.removeFromParent()
         }
         
-        let countDownNode = SKSpriteNode(texture: nil, color: ColorCategory.getBallColor(index: ballNode.getIndex()-1), size: topBarNode.size)
-        countDownNode.position = CGPoint.zero
-        countDownNode.zPosition = 1
+        let countDownNode = SKSpriteNode(color: ColorCategory.getBallColor(index: ballNode.getIndex()-1), size: topBarNode.size)
+        countDownNode.position = CGPoint(x:0.0, y:-topBarNode.size.height*0.09)
+        countDownNode.zPosition = -75
         countDownNode.anchorPoint = CGPoint(x:0.5, y:1.0)
         countDownNode.name = "countDownNode"
         topBarNode.addChild(countDownNode)
@@ -1233,8 +1366,6 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     
     //MARK:- Game Over Logic
     func gameOver() {
-        print("GAMEOVER!!!")
-        
         if let tapToSkipNode = gameLayer.childNode(withName: "taptoskiptextnode") {
             tapToSkipNode.removeFromParent()
         }
@@ -1245,21 +1376,6 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         }
         
         isGameOver = true
-        
-        // update high score if current game score is higher
-        if gameScore >= self.bestScore {
-            self.bestScore = gameScore
-            Analytics.logEvent("new_highscore", parameters: [
-                "highscore": gameScore as NSInteger
-                ])
-            if let newBestRibbon = newBestRibbon {
-                let moveBackAction = SKAction.move(by: CGVector(dx: newBestRibbon.size.width, dy: 0), duration: 0.5)
-                newBestRibbon.run(moveBackAction)
-            }
-            // ask for review
-            StoreReviewHelper.incrementAppHighScoreCount()
-            StoreReviewHelper.checkAndAskForReview()
-        }
         
         // animate balls exploding
         self.gameEndBallEffect()
@@ -1277,15 +1393,39 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         scaleToZero.timingMode = .easeOut
         self.centerNode.run(SKAction.sequence([scaleUp,scaleToZero]))
         
-        // slide back next node
+        // slide left next node
         let slideRightALittle = SKAction.moveBy(x: ballWidth*0.3, y: 0.0, duration: 0.3)
-        let slideBack = SKAction.moveBy(x: -safeAreaRect.width*0.3, y: 0.0, duration: 0.3)
-        if let nextBallMessage = topBarNode.childNode(withName: "nextBallMessage") {
-            nextBallMessage.run(SKAction.sequence([slideRightALittle,slideBack]))
-        }
-        if let nextBallNode = self.nextBallNode {
-            nextBallNode.run(SKAction.sequence([slideRightALittle,slideBack]))
-        }
+        let slideLeft = SKAction.moveBy(x: -safeAreaRect.width*0.3, y: 0.0, duration: 0.3)
+        nextBallButton.run(SKAction.sequence([slideRightALittle,slideLeft]))
+        buttonBelow1.run(SKAction.sequence([slideRightALittle,slideLeft]))
+        
+        // slide right setting node
+        let slideLeftALittle = SKAction.moveBy(x: -ballWidth*0.3, y: 0.0, duration: 0.3)
+        let slideRight = SKAction.moveBy(x: safeAreaRect.width*0.3, y: 0.0, duration: 0.3)
+        settingButton.run(SKAction.sequence([slideLeftALittle,slideRight]))
+        buttonBelow2.run(SKAction.sequence([slideLeftALittle,slideRight]))
+        
+        // Add Coin Node & Label
+        let coinNode = CoinNode(width: ballWidth*0.6)
+        coinNode.anchorPoint = CGPoint(x:1.0, y:1.0)
+        coinNode.position = CGPoint(x: safeAreaRect.width-ballWidth*0.4, y:safeAreaRect.height-ballWidth*0.2)
+        coinNode.zPosition = 198
+        gameOverLayer.addChild(coinNode)
+        
+        let coinNumberAdd = Int(gameScore/500)
+        let coinNumberNode = MessageNode(message: "", fontName: FontNameType.Montserrat_SemiBold)
+        coinNumberNode.setText(to: "+\(coinNumberAdd)")
+        self.coinNumber = self.coinNumber+coinNumberAdd
+        let coinNumberNodeWidth = coinNode.size.width*4.0
+        let coinNumberNodeHeight = coinNode.size.height
+        let coinNumberNodeFrame = CGRect(x: safeAreaRect.width-coinNumberNodeWidth-ballWidth*CGFloat(1.17),
+                                         y: safeAreaRect.height-ballWidth*CGFloat(0.2)-coinNumberNodeHeight,
+                                         width: coinNumberNodeWidth,
+                                         height: coinNumberNodeHeight)
+        coinNumberNode.adjustLabelFontSizeToFitRect(rect: coinNumberNodeFrame)
+        coinNumberNode.setHorizontalAlignment(mode: SKLabelHorizontalAlignmentMode.right)
+        coinNumberNode.zPosition = 198
+        gameOverLayer.addChild(coinNumberNode)
         
         // set up top message node
         let topMessageNodeWidth = safeAreaRect.width*0.8
@@ -1296,67 +1436,43 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               height: topMessageNodeHeight)
         let topMessage = MessageNode(message: "You merged \(mergeBallCount) Balls!", fontName: FontNameType.Montserrat_SemiBold)
         topMessage.zPosition = 100
-        topMessage.setFontColor(color: ColorCategory.getTopBarColor())
+        topMessage.setFontColor(color: ColorCategory.getTextFontColor())
         topMessage.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame)
         gameOverLayer.addChild(topMessage)
         
         
         /*** Bottom Section ***/
         // Restart Node
-        let buttonHeight = ballWidth*1.3
-        let restartButton = MenuButtonNode(color: ColorCategory.BallColor3,
+        let buttonHeight = ballWidth*1.5
+        let restartButton = MenuButtonNode(color: ColorCategory.getStartButtonColor(),
                                            buttonType: ButtonType.LongTextButton,
                                            iconType: IconType.SmallRestartButton,
                                            height: buttonHeight,
                                            text: "RESTART")
-        let buttonWidth = restartButton.size.width
         restartButton.zPosition = 100
         restartButton.position = CGPoint(x: safeAreaRect.width/2,
                                          y: buttonHeight*5.0)
         restartButton.name = "restartButton"
+        restartButton.changeIconNodeColor(to: .white)
         restartButton.buttonDelegate = self
         gameOverLayer.addChild(restartButton)
         
-        // add home button
-        let homeButton = MenuButtonNode(color: ColorCategory.BallColor1,
-                                        buttonType: ButtonType.RoundButton,
-                                        iconType: IconType.HomeButton,
-                                        height: buttonHeight)
-        homeButton.zPosition = 100
-        homeButton.position = CGPoint(x: safeAreaRect.width*0.5-buttonWidth*0.375,
-                                      y: buttonHeight*3.0)
-        homeButton.name = "homebutton"
-        homeButton.buttonDelegate = self
-        gameOverLayer.addChild(homeButton)
+        // add menu button shadow
+        let buttonBelow = ZLSpriteNode(width: restartButton.size.width, image: "LongTextButton", color: ColorCategory.getStartButtonShadowColor())
+        restartButton.setInitialPosition(to: restartButton.position)
+        buttonBelow.position = CGPoint(x: restartButton.position.x, y: restartButton.position.y-buttonHeight*0.10)
+        buttonBelow.zPosition = 50
+        gameOverLayer.addChild(buttonBelow)
         
-        // add share button
-        let shareButton = MenuButtonNode(color: ColorCategory.BallColor2,
-                                         buttonType: ButtonType.RoundButton,
-                                         iconType: IconType.ShareButton,
-                                         height: buttonHeight)
-        shareButton.zPosition = 100
-        shareButton.position = CGPoint(x: safeAreaRect.width*0.5,
-                                       y: buttonHeight*3.0)
-        shareButton.name = "sharebutton"
-        shareButton.buttonDelegate = self
-        gameOverLayer.addChild(shareButton)
-        
-        // add leaderboard button
-        let leaderboardButton = MenuButtonNode(color: ColorCategory.BallColor4,
-                                               buttonType: ButtonType.RoundButton,
-                                               iconType: IconType.LeaderBoardButton,
-                                               height: buttonHeight)
-        leaderboardButton.zPosition = 100
-        leaderboardButton.position = CGPoint(x: safeAreaRect.width*0.5+buttonWidth*0.375,
-                                             y: buttonHeight*3.0)
-        leaderboardButton.name = "leaderboardbutton"
-        leaderboardButton.buttonDelegate = self
-        gameOverLayer.addChild(leaderboardButton)
-        
+        setUpGameOverBottomSection()
         
         /*** Middle Section ***/
         let yDist = ballWidth*1.35
         let topYLevel = (topMessage.frame.minY+restartButton.frame.maxY)*0.5+yDist*2.0
+        
+        if mergeBallNumArray.count > highBallNum {
+            highBallNum = mergeBallNumArray.count
+        }
         
         // show ball 2-6
         if mergeBallNumArray.count <= 6 {
@@ -1373,6 +1489,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             ballNode4.position = CGPoint(x: safeAreaRect.width*0.3, y: topYLevel-yDist*3.0)
             ballNode5.position = CGPoint(x: safeAreaRect.width*0.3, y: topYLevel-yDist*4.0)
             
+            ballNode1.alpha = 0.0
+            ballNode2.alpha = 0.0
+            ballNode3.alpha = 0.0
+            ballNode4.alpha = 0.0
+            ballNode5.alpha = 0.0
+            
             gameOverLayer.addChild(ballNode1)
             gameOverLayer.addChild(ballNode2)
             gameOverLayer.addChild(ballNode3)
@@ -1380,7 +1502,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             gameOverLayer.addChild(ballNode5)
             
             // set up multiplier nodes
-            print(mergeBallNumArray)
+            //print(mergeBallNumArray)
             let messageNum1 = mergeBallNumArray.count >= 2 ? mergeBallNumArray[1] : 0
             let messageNum2 = mergeBallNumArray.count >= 3 ? mergeBallNumArray[2] : 0
             let messageNum3 = mergeBallNumArray.count >= 4 ? mergeBallNumArray[3] : 0
@@ -1401,7 +1523,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode1.zPosition = 100
-            messageNode1.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode1.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode1.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame1)
             messageNode1.setHorizontalAlignment(mode: .left)
             let messageFontSize = messageNode1.getFontSize()
@@ -1411,7 +1533,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode2.zPosition = 100
-            messageNode2.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode2.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode2.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame2)
             messageNode2.setHorizontalAlignment(mode: .left)
             messageNode2.fontSize = messageFontSize
@@ -1421,7 +1543,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode3.zPosition = 100
-            messageNode3.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode3.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode3.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame3)
             messageNode3.setHorizontalAlignment(mode: .left)
             messageNode3.fontSize = messageFontSize
@@ -1431,7 +1553,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode4.zPosition = 100
-            messageNode4.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode4.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode4.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame4)
             messageNode4.setHorizontalAlignment(mode: .left)
             messageNode4.fontSize = messageFontSize
@@ -1441,7 +1563,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode5.zPosition = 100
-            messageNode5.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode5.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode5.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame5)
             messageNode5.setHorizontalAlignment(mode: .left)
             messageNode5.fontSize = messageFontSize
@@ -1452,12 +1574,33 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             gameOverLayer.addChild(messageNode4)
             gameOverLayer.addChild(messageNode5)
             
+            messageNode1.alpha = 0.0
+            messageNode2.alpha = 0.0
+            messageNode3.alpha = 0.0
+            messageNode4.alpha = 0.0
+            messageNode5.alpha = 0.0
+            
+            // animate
+            let fadeIn = SKAction.fadeIn(withDuration: 0.15)
+            
+            ballNode1.run(SKAction.sequence([SKAction.wait(forDuration: 0.1),fadeIn]))
+            ballNode2.run(SKAction.sequence([SKAction.wait(forDuration: 0.2),fadeIn]))
+            ballNode3.run(SKAction.sequence([SKAction.wait(forDuration: 0.3),fadeIn]))
+            ballNode4.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),fadeIn]))
+            ballNode5.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),fadeIn]))
+            
+            messageNode1.run(SKAction.sequence([SKAction.wait(forDuration: 0.1),fadeIn]))
+            messageNode2.run(SKAction.sequence([SKAction.wait(forDuration: 0.2),fadeIn]))
+            messageNode3.run(SKAction.sequence([SKAction.wait(forDuration: 0.3),fadeIn]))
+            messageNode4.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),fadeIn]))
+            messageNode5.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),fadeIn]))
+            
         } else {
             
             // set up ball nodes
             let ballNode1 = BallNode(width: ballWidth*0.83, index: 2)
             let ballNode2 = BallNode(width: ballWidth*0.83, index: 3)
-            let ballNode3 = ZLSpriteNode(height: ballWidth*0.65, image: "BallDots", color: ColorCategory.getTopBarColor())
+            let ballNode3 = ZLSpriteNode(height: ballWidth*0.65, image: "BallDots", color: ColorCategory.getTextFontColor())
             let ballNode4 = BallNode(width: ballWidth*0.83, index: mergeBallNumArray.count-1)
             let ballNode5 = BallNode(width: ballWidth*0.83, index: mergeBallNumArray.count)
             
@@ -1467,6 +1610,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             ballNode4.position = CGPoint(x: safeAreaRect.width*0.3, y: topYLevel-yDist*3.0)
             ballNode5.position = CGPoint(x: safeAreaRect.width*0.3, y: topYLevel-yDist*4.0)
             
+            ballNode1.alpha = 0.0
+            ballNode2.alpha = 0.0
+            ballNode3.alpha = 0.0
+            ballNode4.alpha = 0.0
+            ballNode5.alpha = 0.0
+            
             gameOverLayer.addChild(ballNode1)
             gameOverLayer.addChild(ballNode2)
             gameOverLayer.addChild(ballNode3)
@@ -1474,14 +1623,14 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             gameOverLayer.addChild(ballNode5)
             
             // set up multiplier nodes
-            print(mergeBallNumArray)
+            //print(mergeBallNumArray)
             let messageNum1 = mergeBallNumArray[1]
             let messageNum2 = mergeBallNumArray[2]
             let messageNum4 = mergeBallNumArray[mergeBallNumArray.count-2]
             let messageNum5 = mergeBallNumArray[mergeBallNumArray.count-1]
             let messageNode1 = MessageNode(message: "x\(messageNum1)", fontName: FontNameType.Montserrat_Regular)
             let messageNode2 = MessageNode(message: "x\(messageNum2)", fontName: FontNameType.Montserrat_Regular)
-            let messageNode3 = ZLSpriteNode(height: ballWidth*0.65, image: "BallDots", color: ColorCategory.getTopBarColor())
+            let messageNode3 = ZLSpriteNode(height: ballWidth*0.65, image: "BallDots", color: ColorCategory.getTextFontColor())
             let messageNode4 = MessageNode(message: "x\(messageNum4)", fontName: FontNameType.Montserrat_Regular)
             let messageNode5 = MessageNode(message: "x\(messageNum5)", fontName: FontNameType.Montserrat_Regular)
             
@@ -1494,7 +1643,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode1.zPosition = 100
-            messageNode1.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode1.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode1.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame1)
             messageNode1.setHorizontalAlignment(mode: .left)
             
@@ -1503,7 +1652,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode2.zPosition = 100
-            messageNode2.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode2.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode2.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame2)
             messageNode2.setHorizontalAlignment(mode: .left)
             
@@ -1515,7 +1664,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode4.zPosition = 100
-            messageNode4.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode4.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode4.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame4)
             messageNode4.setHorizontalAlignment(mode: .left)
             
@@ -1524,7 +1673,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                               width: messageNodeWidth,
                                               height: messageNodeHeight)
             messageNode5.zPosition = 100
-            messageNode5.setFontColor(color: ColorCategory.getTopBarColor())
+            messageNode5.setFontColor(color: ColorCategory.getTextFontColor())
             messageNode5.adjustLabelFontSizeToFitRect(rect: topMessageNodeFrame5)
             messageNode5.setHorizontalAlignment(mode: .left)
             
@@ -1534,6 +1683,26 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             gameOverLayer.addChild(messageNode4)
             gameOverLayer.addChild(messageNode5)
             
+            messageNode1.alpha = 0.0
+            messageNode2.alpha = 0.0
+            messageNode3.alpha = 0.0
+            messageNode4.alpha = 0.0
+            messageNode5.alpha = 0.0
+            
+            // animate
+            let fadeIn = SKAction.fadeIn(withDuration: 0.15)
+            
+            ballNode1.run(SKAction.sequence([SKAction.wait(forDuration: 0.1),fadeIn]))
+            ballNode2.run(SKAction.sequence([SKAction.wait(forDuration: 0.2),fadeIn]))
+            ballNode3.run(SKAction.sequence([SKAction.wait(forDuration: 0.3),fadeIn]))
+            ballNode4.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),fadeIn]))
+            ballNode5.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),fadeIn]))
+            
+            messageNode1.run(SKAction.sequence([SKAction.wait(forDuration: 0.1),fadeIn]))
+            messageNode2.run(SKAction.sequence([SKAction.wait(forDuration: 0.2),fadeIn]))
+            messageNode3.run(SKAction.sequence([SKAction.wait(forDuration: 0.3),fadeIn]))
+            messageNode4.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),fadeIn]))
+            messageNode5.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),fadeIn]))
             
         }
         
@@ -1541,55 +1710,166 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         let fadeIn = SKAction.fadeIn(withDuration: 0.5)
         fadeIn.timingMode = .easeIn
         gameOverLayer.run(fadeIn)
+        
+        // update high score if current game score is higher
+        if gameScore >= self.bestScore {
+            self.bestScore = gameScore
+            Analytics.logEvent("new_highscore", parameters: [
+                "highscore": gameScore as NSInteger
+                ])
+            if let newBestRibbon = newBestRibbon {
+                newBestRibbon.removeAllActions()
+                let moveBackAction = SKAction.move(by: CGVector(dx: newBestRibbon.size.width, dy: 0), duration: 0.5)
+                newBestRibbon.run(moveBackAction)
+            }
+            
+            // ask for review
+            StoreReviewHelper.incrementAppHighScoreCount()
+            StoreReviewHelper.checkAndAskForReview()
+        }
+        
+        /*** push to leaderboard ***/
+        postToLeaderBoard(gameScore: gameScore)
+        
+        /*** show Interstitial Ads ***/
+        let noAdsPurchased = UserDefaults.standard.bool(forKey: "noAdsPurchased")
+        if !noAdsPurchased,!StoreReviewHelper.isAskingForReviewThisRound(),gameScore>=5000,isSaveMeAnOption {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "runInterstitialAds"), object: nil)
+        }
     }
     
-    func gameEndBallEffect() {
+    func setUpGameOverBottomSection() {
         
+        let buttonWidth = universalWidth*0.15
+        
+        // add home button
+        let homeButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                               buttonType: ButtonType.MenuButton,
+                                               iconType: IconType.HomeButton,
+                                               width: buttonWidth)
+        homeButton.zPosition = 100
+        homeButton.position = CGPoint(x: safeAreaRect.width*0.5-universalWidth*0.30,
+                                             y: safeAreaRect.height*0.20-buttonWidth*0.5)
+        homeButton.name = "homebutton"
+        homeButton.buttonDelegate = self
+        gameOverLayer.addChild(homeButton)
+        
+        // add sound button
+        let iconTypeHere = gameSoundOn ? IconType.SoundOnButton : IconType.SoundOffButton
+        let soundButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                         buttonType: ButtonType.MenuButton,
+                                         iconType: iconTypeHere,
+                                         width: buttonWidth)
+        soundButton.zPosition = 100
+        soundButton.position = CGPoint(x: safeAreaRect.width*0.5-universalWidth*0.10,
+                                       y: safeAreaRect.height*0.20-buttonWidth*0.5)
+        soundButton.name = "soundbutton"
+        soundButton.buttonDelegate = self
+        gameOverLayer.addChild(soundButton)
+        
+        // add share button
+        let shareButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                        buttonType: ButtonType.MenuButton,
+                                        iconType: IconType.ShareButton,
+                                        width: buttonWidth)
+        shareButton.zPosition = 100
+        shareButton.position = CGPoint(x: safeAreaRect.width*0.5+universalWidth*0.10,
+                                      y: safeAreaRect.height*0.20-buttonWidth*0.5)
+        shareButton.name = "modebutton"
+        shareButton.buttonDelegate = self
+        gameOverLayer.addChild(shareButton)
+        
+        // add leaderboard button
+        let leaderboardButton = MenuButtonNode(color: ColorCategory.getBarTopColor(),
+                                       buttonType: ButtonType.MenuButton,
+                                       iconType: IconType.LeaderBoardButton,
+                                       width: buttonWidth)
+        leaderboardButton.zPosition = 100
+        leaderboardButton.position = CGPoint(x: safeAreaRect.width*0.5+universalWidth*0.30,
+                                         y: safeAreaRect.height*0.20-buttonWidth*0.5)
+        leaderboardButton.name = "settingbutton"
+        leaderboardButton.buttonDelegate = self
+        gameOverLayer.addChild(leaderboardButton)
+        
+        // add menu button shadow
+        let buttonBelow1 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
+        homeButton.setInitialPosition(to: homeButton.position)
+        buttonBelow1.position = CGPoint(x: homeButton.position.x, y: homeButton.position.y-buttonWidth*0.08)
+        buttonBelow1.zPosition = 50
+        gameOverLayer.addChild(buttonBelow1)
+        
+        let buttonBelow2 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
+        soundButton.setInitialPosition(to: soundButton.position)
+        buttonBelow2.position = CGPoint(x: soundButton.position.x, y: soundButton.position.y-buttonWidth*0.08)
+        buttonBelow2.zPosition = 50
+        gameOverLayer.addChild(buttonBelow2)
+        
+        let buttonBelow3 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
+        shareButton.setInitialPosition(to: shareButton.position)
+        buttonBelow3.position = CGPoint(x: shareButton.position.x, y: shareButton.position.y-buttonWidth*0.08)
+        buttonBelow3.zPosition = 50
+        gameOverLayer.addChild(buttonBelow3)
+        
+        let buttonBelow4 = ZLSpriteNode(width: buttonWidth, image: "MenuButton", color: ColorCategory.getBarBottomColor())
+        leaderboardButton.setInitialPosition(to: leaderboardButton.position)
+        buttonBelow4.position = CGPoint(x: leaderboardButton.position.x, y: leaderboardButton.position.y-buttonWidth*0.08)
+        buttonBelow4.zPosition = 50
+        gameOverLayer.addChild(buttonBelow4)
+    }
+    
+    func gameEndSingleBallEffect(ballNode: BallNode) {
+        
+        // define actions
         let scaleDown = SKAction.scale(to: 0.0, duration: 0.3)
         let fadeOut = SKAction.fadeOut(withDuration: 0.3)
         scaleDown.timingMode = .easeOut
         fadeOut.timingMode = .easeOut
         
+        // add emitter
+        let emitter = SKEmitterNode()
+        let particleTexture = SKTexture(imageNamed: "Ball")
+        emitter.particleSize = CGSize(width: self.ballWidth*0.17, height: self.ballWidth*0.17)
+        emitter.particleTexture = particleTexture
+        emitter.particleBirthRate = 150
+        emitter.numParticlesToEmit = 15
+        emitter.particleLifetime = 1.0
+        emitter.emissionAngle = 0.0
+        emitter.emissionAngleRange = CGFloat.pi*2
+        emitter.particleSpeed = 80
+        emitter.particleSpeedRange = 20
+        emitter.particleAlpha = 0.6
+        emitter.particleAlphaRange = 0.2
+        emitter.particleAlphaSpeed = -0.7
+        emitter.particleScale = 1.0
+        emitter.particleScaleRange = 0.2
+        emitter.particleScaleSpeed = -0.5
+        emitter.particleColorBlendFactor = 1.0
+        emitter.particleColor = ballNode.color
+        emitter.particleColorBlendFactorSequence = nil
+        emitter.particleBlendMode = SKBlendMode.alpha
+        emitter.position = ballNode.position
+        emitter.zPosition = 100
+        self.centerNode.addChild(emitter)
+        emitter.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
+                                       SKAction.removeFromParent()]))
+        
+        
+        // animate ball shadow
+        ballNode.run(SKAction.group([scaleDown,fadeOut]),completion:{
+            ballNode.removeFromParent()
+        })
+        
+        // add score
+        self.incrementScore(by: ballNode.getScore(), from: ballNode)
+    }
+    
+    
+    func gameEndBallEffect() {
+        
         var iterCount = 0.0
         for ballNode in ballArray {
             delayWithSeconds(iterCount*0.1) {
-                // add emitter
-                let emitter = SKEmitterNode()
-                let particleTexture = SKTexture(imageNamed: "Ball")
-                emitter.particleSize = CGSize(width: self.ballWidth*0.17, height: self.ballWidth*0.17)
-                emitter.particleTexture = particleTexture
-                emitter.particleBirthRate = 150
-                emitter.numParticlesToEmit = 15
-                emitter.particleLifetime = 1.0
-                emitter.emissionAngle = 0.0
-                emitter.emissionAngleRange = CGFloat.pi*2
-                emitter.particleSpeed = 80
-                emitter.particleSpeedRange = 20
-                emitter.particleAlpha = 0.6
-                emitter.particleAlphaRange = 0.2
-                emitter.particleAlphaSpeed = -0.7
-                emitter.particleScale = 1.0
-                emitter.particleScaleRange = 0.2
-                emitter.particleScaleSpeed = -0.5
-                emitter.particleColorBlendFactor = 1.0
-                emitter.particleColor = ballNode.color
-                emitter.particleColorBlendFactorSequence = nil
-                emitter.particleBlendMode = SKBlendMode.alpha
-                emitter.position = ballNode.position
-                emitter.zPosition = 100
-                self.centerNode.addChild(emitter)
-                emitter.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
-                                               SKAction.removeFromParent()]))
-                
-                
-                // animate ball shadow
-                ballNode.run(SKAction.group([scaleDown,fadeOut]),completion:{
-                    ballNode.removeFromParent()
-                })
-                
-                // add score
-                self.incrementScore(by: ballNode.getScore(), from: ballNode)
-                
+                self.gameEndSingleBallEffect(ballNode: ballNode)
             }
             // add iterCount
             iterCount += 1.0
@@ -1604,7 +1884,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     //MARK:- Top Bar Handling
     func setUpTopBarNode() {
         // set up top score message node
-        let scoreTopMessageNodeWidth = safeAreaRect.width*0.2
+        let scoreTopMessageNodeWidth = universalWidth*0.2
         let scoreTopMessageNodeHeight = topBarNode.size.height*0.15
         let scoreTopMessageNodeFrame = CGRect(x: -scoreTopMessageNodeWidth*0.5,
                                          y: -scoreTopMessageNodeHeight-5,
@@ -1612,83 +1892,132 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
                                          height: scoreTopMessageNodeHeight)
         let scoreTopMessage = MessageNode(message: "SCORE", fontName: FontNameType.Montserrat_SemiBold)
         scoreTopMessage.zPosition = 100
-        scoreTopMessage.setFontColor(color: .white)
+        scoreTopMessage.setFontColor(color: ColorCategory.getMenuIconColor())
         scoreTopMessage.adjustLabelFontSizeToFitRect(rect: scoreTopMessageNodeFrame)
         topBarNode.addChild(scoreTopMessage)
         //debugDrawTopBarArea(rect: scoreTopMessageNodeFrame)
         
         // set up score message node
-        let scoreMessageNodeWidth = safeAreaRect.width*0.3
-        let scoreMessageNodeHeight = topBarNode.size.height*0.85-8
+        let scoreMessageNodeWidth = universalWidth*0.3
+        let scoreMessageNodeHeight = topBarNode.size.height*0.65
         let scoreMessageNodeFrame = CGRect(x: -scoreMessageNodeWidth*0.5,
-                                              y: -topBarNode.size.height+3,
+                                              y: -topBarNode.size.height+topBarNode.size.height*0.08,
                                               width: scoreMessageNodeWidth,
                                               height: scoreMessageNodeHeight)
         scoreNode.zPosition = 100
-        scoreNode.setFontColor(color: .white)
+        scoreNode.setFontColor(color: ColorCategory.getMenuIconColor())
         scoreNode.adjustLabelFontSizeToFitRect(rect: scoreMessageNodeFrame)
         topBarNode.addChild(scoreNode)
         //debugDrawTopBarArea(rect: scoreMessageNodeFrame)
         
         // set up top high score message node
-        let highScoreTopMessageNodeWidth = safeAreaRect.width*0.3
+        let highScoreTopMessageNodeWidth = universalWidth*0.2
         let highScoreTopMessageNodeHeight = topBarNode.size.height*0.15
-        let highScoreTopMessageNodeFrame = CGRect(x: -safeAreaRect.width*0.5+5,
+        let highScoreTopMessageNodeFrame = CGRect(x: -universalWidth*0.365+5,
                                                   y: -highScoreTopMessageNodeHeight-5,
                                                   width: highScoreTopMessageNodeWidth,
                                                   height: highScoreTopMessageNodeHeight)
         let highScoreTopMessage = MessageNode(message: "HIGH SCORE", fontName: FontNameType.Montserrat_SemiBold)
         highScoreTopMessage.zPosition = 100
-        highScoreTopMessage.setFontColor(color: .white)
+        highScoreTopMessage.setFontColor(color: ColorCategory.getMenuIconColor())
         highScoreTopMessage.adjustLabelFontSizeToFitRect(rect: highScoreTopMessageNodeFrame)
         highScoreTopMessage.setHorizontalAlignment(mode: .left)
         topBarNode.addChild(highScoreTopMessage)
         //debugDrawTopBarArea(rect: highScoreTopMessageNodeFrame)
         
         // set up best score message node
-        let bestScoreMessageNodeWidth = safeAreaRect.width*0.23
+        let bestScoreMessageNodeWidth = universalWidth*0.20
         let bestScoreMessageNodeHeight = topBarNode.size.height*0.35
-        let bestScoreMessageNodeFrame = CGRect(x: -safeAreaRect.width*0.5+5,
+        let bestScoreMessageNodeFrame = CGRect(x: -universalWidth*0.365+5,
                                            y: -topBarNode.size.height+topBarNode.size.height*0.24,
                                            width: bestScoreMessageNodeWidth,
                                            height: bestScoreMessageNodeHeight)
         bestScoreNode.setText(to: "\(self.bestScore)")
         bestScoreNode.zPosition = 100
-        bestScoreNode.setFontColor(color: .white)
+        bestScoreNode.setFontColor(color: ColorCategory.getMenuIconColor())
         bestScoreNode.adjustLabelFontSizeToFitRect(rect: bestScoreMessageNodeFrame)
         bestScoreNode.setHorizontalAlignment(mode: .left)
         topBarNode.addChild(bestScoreNode)
         //debugDrawTopBarArea(rect: bestScoreMessageNodeFrame)
         
+        // set up best score message node
+        let comboTopMessageNodeWidth = universalWidth*0.20
+        let comboTopMessageNodeHeight = topBarNode.size.height*0.15
+        let comboTopMessageNodeFrame = CGRect(x: universalWidth*0.365-5-comboTopMessageNodeWidth,
+                                              y: -comboTopMessageNodeHeight-5,
+                                              width: comboTopMessageNodeWidth,
+                                              height: comboTopMessageNodeHeight)
+        let comboTopMessage = MessageNode(message: "COMBO", fontName: FontNameType.Montserrat_SemiBold)
+        comboTopMessage.zPosition = 100
+        comboTopMessage.setFontColor(color: ColorCategory.getMenuIconColor())
+        comboTopMessage.adjustLabelFontSizeToFitRect(rect: comboTopMessageNodeFrame)
+        comboTopMessage.setHorizontalAlignment(mode: .right)
+        topBarNode.addChild(comboTopMessage)
+        //debugDrawTopBarArea(rect: comboTopMessageNodeFrame)
+        
         // set up combo node
-        let comboNodeWidth = safeAreaRect.width*0.25
-        let comboNodeHeight = topBarNode.size.height*0.46
-        let comboNodeFrame = CGRect(x: safeAreaRect.width*0.47-comboNodeWidth,
-                                    y: -topBarNode.size.height+topBarNode.size.height*0.27,
+        let comboNodeWidth = universalWidth*0.20
+        let comboNodeHeight = topBarNode.size.height*0.35
+        let comboNodeFrame = CGRect(x: universalWidth*0.365-5-comboNodeWidth,
+                                    y: -topBarNode.size.height+topBarNode.size.height*0.24,
                                     width: comboNodeWidth,
                                     height: comboNodeHeight)
         comboNode.zPosition = 100
         comboNode.adjustLabelFontSizeToFitRect(rect: comboNodeFrame)
+        comboNode.fontSize = bestScoreNode.fontSize
+        comboNode.setFontColor(color: ColorCategory.getMenuIconColor())
         topBarNode.addChild(comboNode)
         //debugDrawTopBarArea(rect: comboNodeFrame)
      
+    }
+    
+    
+    func setUpButtonNodes() {
+    
+        /*** add buttons ***/
+        let buttonWidth = nextBallButton.size.width
+        
+        nextBallButton.zPosition = 100
+        nextBallButton.position = CGPoint(x: safeAreaRect.width*CGFloat(0.5)-universalWidth*CGFloat(0.4)+buttonWidth*CGFloat(0.5),
+                                          y: safeAreaRect.height*CGFloat(0.9)-topBarNode.size.height*CGFloat(0.59)-nextBallButton.size.height*CGFloat(0.8))
+        nextBallButton.buttonDelegate = self
+        gameLayer.addChild(nextBallButton)
+        
+        settingButton.zPosition = 100
+        settingButton.position = CGPoint(x: safeAreaRect.width*CGFloat(0.5)+universalWidth*CGFloat(0.4)-buttonWidth*CGFloat(0.5),
+                                         y: safeAreaRect.height*CGFloat(0.9)-topBarNode.size.height*CGFloat(0.59)-settingButton.size.height*CGFloat(0.8))
+        settingButton.name = "settingbutton"
+        settingButton.buttonDelegate = self
+        gameLayer.addChild(settingButton)
+        
+        /*** add button shadows ***/
+        nextBallButton.setInitialPosition(to: nextBallButton.position)
+        buttonBelow1.position = CGPoint(x: nextBallButton.position.x, y: nextBallButton.position.y-buttonWidth*0.08)
+        buttonBelow1.zPosition = 50
+        gameLayer.addChild(buttonBelow1)
+        
+        settingButton.setInitialPosition(to: settingButton.position)
+        buttonBelow2.position = CGPoint(x: settingButton.position.x, y: settingButton.position.y-buttonWidth*0.08)
+        buttonBelow2.zPosition = 50
+        gameLayer.addChild(buttonBelow2)
+        
         // set up next ball message node
-        let nextBallMessageNodeWidth = safeAreaRect.width*0.25
-        let nextBallMessageNodeHeight = topBarNode.size.height*0.15
-        let nextBallMessageNodeFrame = CGRect(x: -safeAreaRect.width*0.5+5,
-                                              y: -topBarNode.size.height-highScoreTopMessageNodeHeight-5,
+        let nextBallMessageNodeWidth = buttonWidth*0.6
+        let nextBallMessageNodeHeight = buttonWidth*0.25
+        let nextBallMessageNodeFrame = CGRect(x: -buttonWidth*0.3,
+                                              y: buttonWidth*0.125,
                                               width: nextBallMessageNodeWidth,
-                                             height: nextBallMessageNodeHeight)
+                                              height: nextBallMessageNodeHeight)
         let nextBallMessage = MessageNode(message: "NEXT", fontName: FontNameType.Montserrat_SemiBold)
         nextBallMessage.name = "nextBallMessage"
         nextBallMessage.zPosition = 100
-        nextBallMessage.setFontColor(color: ColorCategory.getTopBarColor())
+        nextBallMessage.setFontColor(color: ColorCategory.getMenuIconColor())
         nextBallMessage.adjustLabelFontSizeToFitRect(rect: nextBallMessageNodeFrame)
-        nextBallMessage.setHorizontalAlignment(mode: .left)
-        topBarNode.addChild(nextBallMessage)
+        nextBallMessage.setHorizontalAlignment(mode: .center)
+        nextBallButton.addChild(nextBallMessage)
         //debugDrawTopBarArea(rect: highScoreTopMessageNodeFrame)
     }
-        
+    
     //MARK:- Pause Menu Handling
     func setUpPauseLayer() {
         /*** set up pause layer ***/
@@ -1703,7 +2032,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         let buttonWidth = min(safeAreaRect.size.width*0.5,safeAreaRect.size.height*0.281)
         
         // add continue button
-        let resumeButton = MenuButtonNode(color: ColorCategory.BallColor3,
+        let resumeButton = MenuButtonNode(color: ColorCategory.BallColor3_Simple,
                                           buttonType: ButtonType.LongButton,
                                           iconType: IconType.ResumeButton,
                                           width: buttonWidth)
@@ -1711,23 +2040,25 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         resumeButton.position = CGPoint(x: safeAreaRect.width/2,
                                         y: safeAreaRect.height/2 + verticleDistance*1.5)
         resumeButton.name = "resumebutton"
+        resumeButton.changeIconNodeColor(to: .white)
         resumeButton.buttonDelegate = self
         pauseLayer.addChild(resumeButton)
         
         // add restart button
-        let restartButton = MenuButtonNode(color: ColorCategory.BallColor1,
+        let restartButton = MenuButtonNode(color: ColorCategory.BallColor1_Simple,
                                            buttonType: ButtonType.LongButton,
-                                           iconType: IconType.SmallRestartButton,
+                                           iconType: IconType.RestartButton,
                                            width: buttonWidth)
         restartButton.zPosition = 10000
         restartButton.position = CGPoint(x: safeAreaRect.width/2,
                                          y: safeAreaRect.height/2 + verticleDistance*0.5)
         restartButton.name = "restartbutton"
+        restartButton.changeIconNodeColor(to: .white)
         restartButton.buttonDelegate = self
         pauseLayer.addChild(restartButton)
         
         // add stop button
-        let stopButton = MenuButtonNode(color: ColorCategory.BallColor2,
+        let stopButton = MenuButtonNode(color: ColorCategory.BallColor2_Simple,
                                         buttonType: ButtonType.LongButton,
                                         iconType: IconType.StopButton,
                                         width: buttonWidth)
@@ -1735,97 +2066,110 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         stopButton.position = CGPoint(x: safeAreaRect.width/2,
                                       y: safeAreaRect.height/2 - verticleDistance*0.5)
         stopButton.name = "stopbutton"
+        stopButton.changeIconNodeColor(to: .white)
         stopButton.buttonDelegate = self
         pauseLayer.addChild(stopButton)
         
-        // add music button
-        var iconTypeHere = IconType.MusicOnButton
-        iconTypeHere = gameMusicOn ? IconType.MusicOnButton : IconType.MusicOffButton
-        let musicButton = MenuButtonNode(color: ColorCategory.BallColor4,
+        // add home button
+        var iconTypeHere = vibrateOn ? IconType.VibrateButton : IconType.VibrateMuteButton
+        let vibrateButton = MenuButtonNode(color: ColorCategory.BallColor4_Simple,
                                          buttonType: ButtonType.ShortButton,
                                          iconType: iconTypeHere,
                                          width: buttonWidth*0.4545)
-        musicButton.zPosition = 10000
-        musicButton.position = CGPoint(x: safeAreaRect.width/2-resumeButton.size.width/2+musicButton.size.width/2,
+        vibrateButton.zPosition = 10000
+        vibrateButton.position = CGPoint(x: safeAreaRect.width/2-resumeButton.size.width/2+vibrateButton.size.width/2,
                                        y: safeAreaRect.height/2 - verticleDistance*1.5)
-        musicButton.name = "musicbutton"
-        musicButton.buttonDelegate = self
-        pauseLayer.addChild(musicButton)
+        vibrateButton.name = "vibrateButton"
+        vibrateButton.changeIconNodeColor(to: .white)
+        vibrateButton.buttonDelegate = self
+        pauseLayer.addChild(vibrateButton)
         
         // add sound button
         iconTypeHere = gameSoundOn ? IconType.SoundOnButton : IconType.SoundOffButton
-        let soundButton = MenuButtonNode(color: ColorCategory.BallColor5,
+        let soundButton = MenuButtonNode(color: ColorCategory.BallColor5_Simple,
                                          buttonType: ButtonType.ShortButton,
                                          iconType: iconTypeHere,
                                          width: buttonWidth*0.4545)
         soundButton.zPosition = 10000
-        soundButton.position = CGPoint(x: safeAreaRect.width/2+resumeButton.size.width/2-musicButton.size.width/2,
+        soundButton.position = CGPoint(x: safeAreaRect.width/2+resumeButton.size.width/2-vibrateButton.size.width/2,
                                        y: safeAreaRect.height/2 - verticleDistance*1.5)
         soundButton.name = "soundbutton"
+        soundButton.changeIconNodeColor(to: .white)
         soundButton.buttonDelegate = self
         pauseLayer.addChild(soundButton)
         
     }
     
     func pauseButton() {
-        if !isGameStart {
+        
+        if isGamePaused {
             return
         }
         
+        isGamePaused = true
+        
         // pause everything
         gameLayer.isPaused = true
-        for child in gameLayer.children {
+        for child in centerNode.children {
             child.isPaused = true
         }
-        physicsWorld.speed = 0.0
         
         pauseLayer.position = CGPoint(x:0.0, y:bottomSafeSets)
         self.addChild(pauseLayer)
         pauseLayer.name = "pauselayer"
+        
+        
+        // continue combo
+        let currentComboTime = NSDate().timeIntervalSince1970
+        if currentComboTime-lastComboTime < 1.0 {
+            isInCombo = true
+        }
     }
     
     func unpauseButton() {
-        if !isGameStart {
+        //print("UNPAUSE!")
+        
+        if !isGamePaused {
             return
         }
         
+        isGamePaused = false
+        
         // unpause everything
         gameLayer.isPaused = false
-        for child in gameLayer.children {
+        for child in centerNode.children {
             child.isPaused = false
         }
-        physicsWorld.speed = 1.0
+        
+        for child in topBarNode.children {
+            child.isPaused = false
+        }
+        
+        // continue countdown
+        if let countDownNode = topBarNode.childNode(withName: "countDownNode") {
+            let countDownTimeLeft = countDownTime*Double(countDownNode.xScale)
+            let countDownAction = SKAction.scaleX(to: 0.0, y: 1.0, duration: countDownTimeLeft)
+            countDownNode.run(countDownAction, completion:{
+                countDownNode.removeFromParent()
+                self.combo = 0
+                self.setComboNumber(to: 1)
+            })
+        }
         
         // unpause scene
         self.scene?.isPaused = false
         pauseLayer.removeFromParent()
-        self.scene?.isPaused = false
-    }
-    
-    
-    //MARK:- ControlButtonDelegate Func
-    func controlButtonWasPressed(sender: ControlButtonNode) {
-        // play sound
-        if gameSoundOn {
-            self.run(buttonPressedSound)
-        }
         
-        // Case 1. Pause button pressed
-        if sender.getControlButtonType() == ControlButtonType.PauseButton {
-            //print("pauseButtonWasPressed")
-            //if !isGameOver {
-                if isGamePaused {
-                    unpauseButton()
-                } else {
-                    pauseButton()
-                }
-                isGamePaused = !isGamePaused
-            //}
-            
-            return
+        // continue combo
+        if isInCombo {
+            // update lastComboTime
+            let currentComboTime = NSDate().timeIntervalSince1970
+            lastComboTime = currentComboTime
+            isInCombo = false
         }
         
     }
+    
     
     // MARK:- Button Pressed
     func buttonWasPressed(sender: MenuButtonNode) {
@@ -1850,28 +2194,25 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             gameSoundOn = false
             return
         }
-        if iconType == IconType.MusicOnButton  {
-            gameMusicOn = true
-            /*** play background music */
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "resumeBackgroundSound"), object: nil)
-            return
-        }
-        if iconType == IconType.MusicOffButton  {
-            gameMusicOn = false
-            /*** pause background music */
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "pauseBackgroundSound"), object: nil)
-            return
-        }
         if iconType == IconType.ResumeButton  {
-            if isGamePaused {
-                unpauseButton()
-                isGamePaused = false
+            unpauseButton()
+            return
+        }
+        if iconType == IconType.VibrateButton  {
+            vibrateOn = true
+            // vibrate
+            if vibrateOn {
+                AudioServicesPlaySystemSound(1521)
             }
+            return
+        }
+        if iconType == IconType.VibrateMuteButton  {
+            vibrateOn = false
             return
         }
         if iconType == IconType.HomeButton  {
             if view != nil {
-                let scene = GameScene(size: size)
+                let scene = MenuScene(size: size)
                 scene.isAdReady = self.isAdReady
                 let transition:SKTransition = SKTransition.fade(withDuration: 0.5)
                 self.view?.presentScene(scene, transition: transition)
@@ -1889,8 +2230,12 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             return
         }
         if iconType == IconType.StopButton  {
-            //unpauseButton()
-            //gameOver()
+            unpauseButton()
+            // deactivate top bar
+            for child in topBarNode.children {
+                child.removeAllActions()
+            }
+            gameOver()
             return
         }
         if iconType == IconType.ShareButton  {
@@ -1915,115 +2260,25 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
             
             return
         }
-        if iconType == IconType.FacebookButton  {
-            let fbInstalled = schemeAvailable("fb://")
-            
-            if fbInstalled {
-                // If user twitter installed
-                guard let url = URL(string: "fb://profile/349909612079389") else {
-                    return
-                }
-                
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            } else {
-                // If user does not have twitter installed
-                guard let url = URL(string: "https://www.facebook.com/RawwrStudios") else {
-                    return
-                }
-                
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            }
-            
-            return
-        }
-        if iconType == IconType.TwitterButton  {
-            let twInstalled = schemeAvailable("twitter://")
-            
-            if twInstalled {
-                // If user twitter installed
-                guard let url = URL(string: "twitter://user?screen_name=rawwrstudios") else {
-                    return
-                }
-                
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            } else {
-                // If user does not have twitter installed
-                guard let url = URL(string: "https://mobile.twitter.com/rawwrstudios") else {
-                    return
-                }
-                
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(url)
-                }
-            }
-            
-            return
-        }
-        if iconType == IconType.LikeButton {
-            let userInfoDict:[String: String] = ["forButton": "like"]
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "displayAlertMessage"), object: nil, userInfo: userInfoDict)
-            return
-        }
         if iconType == IconType.LeaderBoardButton {
             let userInfoDict:[String: String] = ["forButton": "leaderboard"]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "displayAlertMessage"), object: nil, userInfo: userInfoDict)
             return
         }
-        if iconType == IconType.NoAdsButton {
-            if !IAPHelper.canMakePayments() {
-                let userInfoDict:[String: String] = ["forButton": "iapfail"]
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "displayAlertMessage"), object: nil, userInfo: userInfoDict)
-            }
-            
-            products = []
-            IAPProducts.store.requestProducts{success, products in
-                if success {
-                    
-                    // no enough iap
-                    if products == nil || products?.count != 4 {
-                        let userInfoDict:[String: String] = ["forButton": "iapfail"]
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "displayAlertMessage"), object: nil, userInfo: userInfoDict)
-                        return
-                    }
-                    self.products = products!
-                    
-                    // buy selected product
-                    for index in 0..<4 {
-                        let thisProduct = self.products[index] as SKProduct
-                        if thisProduct.productIdentifier == IAPProducts.NoAds {
-                            IAPProducts.store.buyProduct(thisProduct)
-                            return
-                        }
-                    }
-                    
+        if iconType == IconType.SettingButton {
+        
+            if !isGameOver {
+                
+                // play sound
+                if gameSoundOn {
+                    self.run(buttonPressedSound)
                 }
-            }
-            return
-        }
-        if iconType == IconType.RestoreIAPButton  {
-            IAPProducts.store.restorePurchases()
-            return
-        }
-        if iconType == IconType.StoreButton {
-            if view != nil {
-                let transition:SKTransition = SKTransition.fade(withDuration: 0.5)
-                let storeScene = StoreScene(size: self.size)
-                storeScene.isAdReady = self.isAdReady
-                self.view?.presentScene(storeScene, transition: transition)
+                
+                if isGamePaused {
+                    unpauseButton()
+                } else {
+                    pauseButton()
+                }
             }
             return
         }
@@ -2033,19 +2288,34 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     //MARK:- Helper Functions
     @objc func applicationWillResignActive() {
         
+        if !isGamePaused, !isGameOver {
+            //print("SAVE PROGRESS!")
+            if gameScore > 0 {
+                UserDefaults.standard.set(true, forKey: "gameInProgress")
+            } else {
+                UserDefaults.standard.set(false, forKey: "gameInProgress")
+            }
+            
+            pauseButton()
+            isGameExitPaused = true
+            
+            // fade out arrow node
+            initialTouchPos = nil
+            arrowHeadNode.alpha = 0.0
+        }
     }
     
     @objc func applicationDidBecomeActive(){
-        
-    }
-    
-    func schemeAvailable(_ scheme: String) -> Bool {
-        if let url = URL(string: scheme) {
-            return UIApplication.shared.canOpenURL(url)
+        if isGameExitPaused {
+            unpauseButton()
+            isGameExitPaused = false
+        } else {
+            // deactivate top bar
+            for child in topBarNode.children {
+                child.removeAllActions()
+            }
         }
-        return false
     }
-    
     
     func debugDrawArea(rect drawRect: CGRect) {
         let shape = SKShapeNode(rect: drawRect)
@@ -2059,6 +2329,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         let shape = SKShapeNode(rect: drawRect)
         shape.strokeColor = SKColor.red
         shape.lineWidth = 2.0
+        shape.zPosition = 10000
         topBarNode.addChild(shape)
     }
     
@@ -2191,7 +2462,7 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
 
     
     func presentShareSheet() {
-        let postText: String = "Check out my score! I got \(gameScore) points in Balls vs Cups! #OrbitMerge #RawwrStudios"
+        let postText: String = "Check out my score! I got \(gameScore) points in 2048 Ball Blast: Crazy Number! #RawwrStudios #2048Balls"
         // append h ttps://itunes.apple.com/app/circle/id911152486
         var activityItems : [Any]
         if let postImage = postImage, isPhotoPermission{
@@ -2216,9 +2487,9 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     func postToLeaderBoard(gameScore: Int) {
         print("Highscore postToLeaderBoard!")
         
-        if GKLocalPlayer.localPlayer().isAuthenticated {
+        if GKLocalPlayer.local.isAuthenticated {
             
-            let scoreReporter = GKScore(leaderboardIdentifier: "OrbitMerge")
+            let scoreReporter = GKScore(leaderboardIdentifier: "com.RawwrStudios.OrbitMerge")
             scoreReporter.value = Int64(gameScore)
             let scoreArray: [GKScore] = [scoreReporter]
             
@@ -2230,7 +2501,6 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
         }
     }
     
-    
     //MARK:- Rewarded Ads
     func enableAdsSaveMe() {
         isAdReady = true
@@ -2241,6 +2511,38 @@ class GameScene: SKScene, Alertable, MenuButtonDelegate, ControlButtonDelegate {
     }
     
     func performAdsSaveMe() {
-        print("gamescene performAdsSaveMeAction")
+        
+        // Log Event
+        Analytics.logEvent("ad_save_me", parameters: [:])
+        
+        isGameOver = false
+        
+        // remove save me layer
+        saveMeLayer.removeAllChildren()
+        saveMeLayer.removeFromParent()
+        if let tapToSkipNode = gameLayer.childNode(withName: "taptoskiptextnode") {
+            tapToSkipNode.removeFromParent()
+        }
+        
+        // scale back circle
+        centerNode.removeAllActions()
+        let scaleBack = SKAction.scale(to: 1.0, duration: 0.2)
+        scaleBack.timingMode = .easeIn
+        centerNode.run(scaleBack)
+        
+        if let gameOverBallPos = gameOverBallPos {
+            let gameOverBallNode = ballArray[gameOverBallPos]
+            gameEndSingleBallEffect(ballNode: gameOverBallNode)
+            
+            //debugPrintBallArray(ballArray: ballArray)
+            ballArray.remove(at: gameOverBallPos)
+            //debugPrintBallArray(ballArray: ballArray)
+        }
+        
+        continueComboCountdown()
+        
+        // spawn new ball
+        spawnNewBall()
+
     }
 }

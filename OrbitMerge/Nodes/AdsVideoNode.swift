@@ -1,6 +1,6 @@
 //
 //  AdsVideoNode.swift
-//  Bouncing
+//  OrbitMerge
 //
 //  Created by Alan Lou on 2/12/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.

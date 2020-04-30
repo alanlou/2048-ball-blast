@@ -1,6 +1,6 @@
 //
 //  MenuButtonNode.swift
-//  BreakoutDraw
+//  OrbitMerge
 //
 //  Created by Alan Lou on 7/13/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -19,22 +19,26 @@ struct ButtonType {
     static let ShortButton:  String = "ShortButton"
     static let RoundButton:  String = "RoundButton"
     static let LeftButton:  String = "LeftButton"
+    static let MenuButton:  String = "MenuButton"
+    static let StartButton:  String = "CircleArea"
 }
 
 struct IconType {
     static let ResumeButton:  String = "Resume"
     static let PlayButton:  String = "Resume"
     static let RestartButton:  String = "Restart"
+    static let BackButton:  String = "BackButton"
     static let StopButton:  String = "Stop"
-    static let SmallRestartButton:  String = "SmallRestart"
+    static let SmallRestartButton:  String = "Restart"
     static let ShareButton:  String = "Share"
     static let HomeButton:  String = "Home"
     static let SoundOnButton:  String = "Sound"
     static let SoundOffButton:  String = "SoundMute"
     static let MusicOnButton:  String = "MusicOn"
     static let MusicOffButton:  String = "MusicOff"
-    static let BrightModeButton:  String = "BrightMode"
-    static let DarkModeButton:  String = "DarkMode"
+    static let VibrateButton:  String = "Vibrate"
+    static let VibrateMuteButton:  String = "VibrateMute"
+    static let ModeButton:  String = "Mode"
     static let LeaderBoardButton:  String = "Medal"
     static let StoreButton:  String = "Store"
     static let TwitterButton:  String = "Twitter"
@@ -44,12 +48,16 @@ struct IconType {
     static let LikeButton:  String = "Like"
     static let MoreIconsButton:  String = "MoreIcons"
     static let RestoreIAPButton:  String = "RestoreIAP"
+    static let SettingButton:  String = "Setting"
+    static let NoButton:  String = "None"
 }
 
 class MenuButtonNode: SKSpriteNode {
     var buttonType: String
     var iconType: String
     var iconNode: SKSpriteNode
+    var initialPosition: CGPoint
+    var isPushDown: Bool
     var textMessageNode: MessageNode?
     var gameSoundOn: Bool? {
         get {
@@ -83,8 +91,16 @@ class MenuButtonNode: SKSpriteNode {
         self.iconNode = SKSpriteNode()
         self.buttonType = buttonType
         self.iconType = iconType
+        self.initialPosition = CGPoint.zero
         let buttonTexture = SKTexture(imageNamed: buttonType)
-        let buttonTextureSize = CGSize(width: width, height: width*buttonTexture.size().height/buttonTexture.size().width)
+        let buttonHeight = width*buttonTexture.size().height/buttonTexture.size().width
+        let buttonTextureSize = CGSize(width: width, height: buttonHeight)
+        if buttonType == ButtonType.MenuButton ||
+            (iconType == IconType.SmallRestartButton && buttonType == ButtonType.LongTextButton) {
+            isPushDown = true
+        } else {
+            isPushDown = false
+        }
         super.init(texture: buttonTexture, color: .clear, size: buttonTextureSize)
         self.name = "menubutton"
         isUserInteractionEnabled = true
@@ -92,25 +108,47 @@ class MenuButtonNode: SKSpriteNode {
         self.color = color
         self.colorBlendFactor = 1.0
         
-        // texture
+        if iconType == IconType.NoButton {
+            return
+        }
+        
+        // icon texture
         let iconTexture = SKTexture(imageNamed: iconType)
-        var iconWidth = width*iconTexture.size().width/buttonTexture.size().width
-        var iconHeight = width*iconTexture.size().height/buttonTexture.size().width
+        var iconHeight = buttonHeight*(1.7/3.0)
+        var iconWidth = iconTexture.size().width*iconHeight/iconTexture.size().height
         if buttonType == ButtonType.LeftButton {
-            iconWidth = 1.15*width*iconTexture.size().width/buttonTexture.size().height
-            iconHeight = 1.15*width*iconTexture.size().height/buttonTexture.size().height
+            iconWidth = 1.15*iconWidth
+            iconHeight = 1.15*iconHeight
+        } else if buttonType == ButtonType.ShortButton {
+            iconWidth = 1.20*iconWidth
+            iconHeight = 1.20*iconHeight
+        } else if buttonType == ButtonType.MenuButton {
+            iconWidth = buttonHeight*0.618
+            iconHeight = buttonHeight*0.618
+            if iconType == IconType.BackButton {
+                iconWidth = buttonHeight*0.56
+                iconHeight = buttonHeight*0.56
+            }
+        } else if buttonType == ButtonType.StartButton {
+            iconHeight = buttonHeight*(0.38)
+            iconWidth = iconTexture.size().width*iconHeight/iconTexture.size().height
         }
         
         let iconTextureSize = CGSize(width: iconWidth, height: iconHeight)
         iconNode = SKSpriteNode(texture: iconTexture,
-                                color: UIColor.white.withAlphaComponent(0.88),
+                                color: .clear,
                                 size: iconTextureSize)
+        iconNode.color = ColorCategory.getMenuIconColor()
         iconNode.colorBlendFactor = 1.0
         iconNode.zPosition = 2000
         if buttonType == ButtonType.LongTextButton {
             iconNode.position = CGPoint(x:-width*0.25, y:0)
+        } else if buttonType == ButtonType.MenuButton {
+            iconNode.position = CGPoint(x:0.0, y:buttonHeight*0.04)
+        } else if buttonType == ButtonType.StartButton {
+            iconNode.position = CGPoint(x:width*0.035, y:0.0)
         } else {
-            iconNode.position = CGPoint(x:0, y:0)
+            iconNode.position = CGPoint(x:0.0, y:0.0)
         }
         self.addChild(iconNode)
         
@@ -147,7 +185,7 @@ class MenuButtonNode: SKSpriteNode {
             textMessageNode = MessageNode(message: text)
             textMessageNode!.adjustLabelFontSizeToFitRect(rect: textNodeFrame)
             textMessageNode!.setHorizontalAlignment(mode: .center)
-            textMessageNode!.setFontColor(color: UIColor.white.withAlphaComponent(0.88))
+            textMessageNode!.setFontColor(color: .white)
             //debugDrawArea(rect: textNodeFrame)
             self.addChild(textMessageNode!)
         }
@@ -191,26 +229,16 @@ class MenuButtonNode: SKSpriteNode {
             iconNode.texture = texture
             return
         }
-        if iconType == IconType.DarkModeButton {
-            iconType = IconType.BrightModeButton
+        if iconType == IconType.VibrateButton {
+            iconType = IconType.VibrateMuteButton
             let texture = SKTexture(imageNamed: iconType)
             iconNode.texture = texture
-            if let textMessageNode = textMessageNode{
-                textMessageNode.setText(to: "Day")
-            }
-            // select mode
-            UserDefaults.standard.set("Bright", forKey: "mode")
             return
         }
-        if iconType == IconType.BrightModeButton {
-            iconType = IconType.DarkModeButton
+        if iconType == IconType.VibrateMuteButton {
+            iconType = IconType.VibrateButton
             let texture = SKTexture(imageNamed: iconType)
             iconNode.texture = texture
-            if let textMessageNode = textMessageNode{
-                textMessageNode.setText(to: "Night")
-            }
-            // select mode
-            UserDefaults.standard.set("Night", forKey: "mode")
             return
         }
     }
@@ -219,10 +247,15 @@ class MenuButtonNode: SKSpriteNode {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
         let touchLocation = touch!.location(in: self.parent!)
-        
+        print(buttonType)
         if self.contains(touchLocation) {
-            let scaleUp = SKAction.scale(to: 1.15, duration: 0.12)
-            self.run(scaleUp, withKey: "scaleup")
+            if isPushDown {
+                let moveDown = SKAction.move(to: CGPoint(x: initialPosition.x, y:initialPosition.y-size.height*0.05), duration: 0.04)
+                self.run(moveDown, withKey: "buttonMoving")
+            } else {
+                let scaleUp = SKAction.scale(to: 1.15, duration: 0.12)
+                self.run(scaleUp, withKey: "buttonMoving")
+            }
         }
     }
     
@@ -231,14 +264,24 @@ class MenuButtonNode: SKSpriteNode {
         let touchLocation = touch!.location(in: self.parent!)
         
         if self.contains(touchLocation) {
-            if let _ = self.action(forKey: "scaleup") {
+            if let _ = self.action(forKey: "buttonMoving") {
             } else {
-                let scaleUp = SKAction.scale(to: 1.15, duration: 0.12)
-                self.run(scaleUp, withKey: "scaleup")
+                if isPushDown {
+                    let moveDown = SKAction.move(to: CGPoint(x: initialPosition.x, y:initialPosition.y-size.height*0.05), duration: 0.04)
+                    self.run(moveDown, withKey: "buttonMoving")
+                } else {
+                    let scaleUp = SKAction.scale(to: 1.15, duration: 0.12)
+                    self.run(scaleUp, withKey: "buttonMoving")
+                }
             }
         } else {
-            let scaleDown = SKAction.scale(to: 1.0, duration: 0.08)
-            self.run(scaleDown)
+            if isPushDown {
+                let moveBack = SKAction.move(to: initialPosition, duration: 0.04)
+                self.run(moveBack)
+            } else {
+                let scaleDown = SKAction.scale(to: 1.0, duration: 0.08)
+                self.run(scaleDown)
+            }
         }
     }
     
@@ -246,9 +289,15 @@ class MenuButtonNode: SKSpriteNode {
         let touch = touches.first
         let touchLocation = touch!.location(in: self.parent!)
         
-        let scaleDown = SKAction.scale(to: 1.0, duration: 0.08)
-        self.removeAction(forKey: "scaleup")
-        self.run(scaleDown)
+        if isPushDown {
+            let moveBack = SKAction.move(to: initialPosition, duration: 0.04)
+            self.removeAction(forKey: "buttonMoving")
+            self.run(moveBack)
+        } else {
+            let scaleDown = SKAction.scale(to: 1.0, duration: 0.08)
+            self.removeAction(forKey: "buttonMoving")
+            self.run(scaleDown)
+        }
         
         if self.contains(touchLocation) {
             interact()
@@ -281,6 +330,10 @@ class MenuButtonNode: SKSpriteNode {
     
     func getIconType() -> String {
         return self.iconType
+    }
+    
+    func setInitialPosition(to initPos: CGPoint) {
+        self.initialPosition = initPos
     }
     
     func performWobbleAction() {

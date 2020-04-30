@@ -27,17 +27,17 @@ open class IAPHelper : NSObject  {
 }
 
 // MARK: - StoreKit API
-
 extension IAPHelper {
   
     public func requestProducts(completionHandler: @escaping ProductsRequestCompletionHandler) {
-//        print("Request Products")
+        print("Request Products")
         productsRequest?.cancel()
         productsRequestCompletionHandler = completionHandler
         
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
         productsRequest!.delegate = self
         productsRequest!.start()
+        print("requestProducts Ends")
     }
     
     public func buyProduct(_ product: SKProduct) {
@@ -74,12 +74,12 @@ extension IAPHelper: SKProductsRequestDelegate {
     }
     
     public func request(_ request: SKRequest, didFailWithError error: Error) {
-//        print("Failed to load list of products.")
+        print("Failed to load list of products.")
         
         let userInfoDict:[String: String] = ["forButton": "iapfail"]
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "displayAlertMessage"), object: nil, userInfo: userInfoDict)
         
-//        print("Error: \(error.localizedDescription)")
+        print("Error: \(error.localizedDescription)")
         productsRequestCompletionHandler?(false, nil)
         clearRequestAndHandler()
     }
@@ -159,15 +159,6 @@ extension IAPHelper: SKPaymentTransactionObserver {
                 // remove banner ads
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "removeBannerAds"), object: nil)
             }
-        } else if identifier == IAPProducts.Ring200 {
-            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "coinNumber") + 200, forKey: "coinNumber")
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "addedCoins"), object: nil)
-        } else if identifier == IAPProducts.Ring500 {
-            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "coinNumber") + 500, forKey: "coinNumber")
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "addedCoins"), object: nil)
-        } else if identifier == IAPProducts.Ring900 {
-            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "coinNumber") + 900, forKey: "coinNumber")
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "addedCoins"), object: nil)
         }
         
         

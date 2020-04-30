@@ -1,6 +1,6 @@
 //
 //  MyUtils.swift
-//  BreakoutDraw
+//  OrbitMerge
 //
 //  Created by Alan Lou on 7/12/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -9,23 +9,6 @@
 import Foundation
 import UIKit
 import SpriteKit
-
-public extension Int {
-    /// returns number of digits in Int number
-    public var digitCount: Int {
-        get {
-            return numberOfDigits(in: self)
-        }
-    }
-    // private recursive method for counting digits
-    private func numberOfDigits(in number: Int) -> Int {
-        if abs(number) < 10 {
-            return 1
-        } else {
-            return 1 + numberOfDigits(in: number/10)
-        }
-    }
-}
 
 extension CGFloat {
     func sign() -> CGFloat {
@@ -47,6 +30,23 @@ extension CGFloat {
             adjRotationAngle = adjRotationAngle+CGFloat.pi*2.0
         }
         return adjRotationAngle
+    }
+}
+
+public extension Int {
+    /// returns number of digits in Int number
+    public var digitCount: Int {
+        get {
+            return numberOfDigits(in: self)
+        }
+    }
+    // private recursive method for counting digits
+    private func numberOfDigits(in number: Int) -> Int {
+        if abs(number) < 10 {
+            return 1
+        } else {
+            return 1 + numberOfDigits(in: number/10)
+        }
     }
 }
 
@@ -73,7 +73,7 @@ extension SKSpriteNode {
         effectNode.shouldRasterize = true
         addChild(effectNode)
         effectNode.addChild(SKSpriteNode(texture: texture))
-        effectNode.filter = CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputRadius":radius])
+        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius":radius])
     }
 }
 
@@ -104,14 +104,6 @@ extension CGVector {
     }
 }
 
-extension UITouch
-{
-    var positionOnScene : CGPoint
-    {
-        return self.location(in: (self.view as! SKView).scene!)
-    }
-}
-
 extension CGPoint
 {
     static public func +(lhs:CGPoint,rhs:CGPoint) -> CGPoint
@@ -125,6 +117,14 @@ extension CGPoint
     static public func -= (lhs:inout CGPoint,rhs:CGPoint)
     {
         lhs = lhs - rhs
+    }
+}
+
+extension UITouch
+{
+    var positionOnScene : CGPoint
+    {
+        return self.location(in: (self.view as! SKView).scene!)
     }
 }
 

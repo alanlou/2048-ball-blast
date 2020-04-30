@@ -10,7 +10,6 @@ import UIKit
 import SpriteKit
 import GameKit
 import Firebase
-//import GoogleMobileAds
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADBannerViewDelegate, GADInterstitialDelegate, GADRewardBasedVideoAdDelegate {
 
@@ -31,31 +30,17 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
     // Variables
     var didWatchRewardAds: Bool = false
     
-    // Background music
-    var bgSoundPlayer:AVAudioPlayer?
-    
     // Ads Unit ID
     // Banner Ad unit ID (Test): ca-app-pub-3940256099942544/2934735716
     // Banner Ad unit ID (OrbitMerge): ca-app-pub-5422633750847690/2469010543
-    let bannerAdsUnitID = "ca-app-pub-3940256099942544/2934735716"
+    let bannerAdsUnitID = "ca-app-pub-5422633750847690/2469010543"
     // Reward Ad unit ID (Test): ca-app-pub-3940256099942544/1712485313
     // Reward Ad unit ID (OrbitMerge): ca-app-pub-5422633750847690/2478100476
-    let rewardAdsUnitID = "ca-app-pub-3940256099942544/1712485313"
+    let rewardAdsUnitID = "ca-app-pub-5422633750847690/2478100476"
     // Interstitial Ad unit ID (Test): ca-app-pub-3940256099942544/4411468910
     // Interstitial Ad unit ID (OrbitMerge): ca-app-pub-5422633750847690/5641968795
-    let gameFinishAdsUnitID = "ca-app-pub-3940256099942544/4411468910"
+    let gameFinishAdsUnitID = "ca-app-pub-5422633750847690/5641968795"
     
-    var gameMusicOn: Bool {
-        get {
-            if  UserDefaults.standard.object(forKey: "gameMusicOn") == nil {
-                UserDefaults.standard.set(true, forKey: "gameMusicOn")
-            }
-            return UserDefaults.standard.bool(forKey: "gameMusicOn")
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "gameMusicOn")
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,33 +71,21 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
         
         // Add reward ads observer
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(runRewardsAds),
-                                               name: Notification.Name(rawValue: "runRewardAds"),
+                                               selector: #selector(removeBannerAds),
+                                               name: Notification.Name(rawValue: "removeBannerAds"),
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(runInterstitialAds),
                                                name: Notification.Name(rawValue: "runInterstitialAds"),
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(removeBannerAds),
-                                               name: Notification.Name(rawValue: "removeBannerAds"),
+                                               selector: #selector(runRewardsAds),
+                                               name: Notification.Name(rawValue: "runRewardAds"),
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(displayAlertMessage(notification:)),
                                                name: Notification.Name(rawValue: "displayAlertMessage"),
                                                object: nil)
-        
-        // Background music
-        prepareBackgroundSound()
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(pauseBackgroundSound),
-                                               name: Notification.Name(rawValue: "pauseBackgroundSound"),
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(resumeBackgroundSound),
-                                               name: Notification.Name(rawValue: "resumeBackgroundSound"),
-                                               object: nil)
-        
         
         // prepare rewards ads
         prepareRewardsAds()
@@ -140,7 +113,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
             logoView.alpha = 1.0
             
             /*** initialize Main ***/
-            let scene = GameScene(size: self.view.bounds.size) // match the device's size
+            let scene = MenuScene(size: self.view.bounds.size) // match the device's size
             scene.isFirstTimeOpening = !launchedBefore
             // Set the scale mode to scale to fit the window
             scene.scaleMode = .aspectFill
@@ -148,12 +121,11 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
             if let view = self.view as! SKView? {
                 // present game scene
                 self.skView = view
-                skView.showsFPS = true
-                skView.showsPhysics = true
-                skView.showsNodeCount = true
+                //skView.showsFPS = true
+                //skView.showsPhysics = true
+                //skView.showsNodeCount = true
                 self.skView.ignoresSiblingOrder = true
                 
-                //print("YOYOYO")
                 scene.isAdReady = self.isAdReady
                 scene.alpha = 0.0
                 self.skView.presentScene(scene)
@@ -166,12 +138,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
                 self.logoView.isHidden = true
                 
                 // For Gamecenter
-                //self.authenticateLocalPlayer()
-                
-                // actually play game music
-                if self.gameMusicOn {
-                    //self.bgSoundPlayer!.play()
-                }
+                self.authenticateLocalPlayer()
                 
                 let fadeIn = SKAction.fadeIn(withDuration: 0.5)
                 scene.run(fadeIn)
@@ -311,6 +278,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
         if let gameScene = skView.scene as? GameScene {
             gameScene.enableAdsSaveMe()
         }
+        if let menuScene = skView.scene as? MenuScene {
+            menuScene.isAdReady = true
+        }
         if let storeScene = skView.scene as? StoreScene {
             storeScene.enableWatchVideo()
         }
@@ -323,15 +293,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
     func rewardBasedVideoAdDidStartPlaying(_ rewardBasedVideoAd: GADRewardBasedVideoAd) {
         //print("Reward based video ad started playing.")
         
-        pauseBackgroundSound()
     }
     
     func rewardBasedVideoAdDidClose(_ rewardBasedVideoAd: GADRewardBasedVideoAd) {
         //print("Reward based video ad is closed.")
-        
-        if gameMusicOn {
-            resumeBackgroundSound()
-        }
         
         isAdReady = false
         prepareRewardsAds()
@@ -344,7 +309,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
         
         if let gameScene = skView.scene as? GameScene, !didWatchRewardAds {
             //print("gameOver")
-            //gameScene.gameOver()
+            gameScene.gameOver()
         }
         
         // watched video to add coins
@@ -373,7 +338,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
     
     //MARK:- Prepare and Run Reward Video Ads
     func prepareRewardsAds() {
-        //print("PREPARE ADS!")
+        print("PREPARE ADS!")
         rewardBasedVideo = GADRewardBasedVideoAd.sharedInstance()
         rewardBasedVideo?.delegate = self
         
@@ -399,9 +364,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
         self.bannerView.removeFromSuperview()
         self.view.setNeedsDisplay()
     }
+    
     //MARK:- Interstitial Ads
     func createAndLoadInterstitial() -> GADInterstitial {
-        //        //print("Create and Load Interstitial Ads!")
+        //print("Create and Load Interstitial Ads!")
         let interstitial = GADInterstitial(adUnitID: gameFinishAdsUnitID)
         interstitial.delegate = self
         interstitial.load(GADRequest())
@@ -416,63 +382,59 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
             self.interstitial.present(fromRootViewController: self)
         } else {
             //print("Interstitial Ad wasn't ready")
-            //interstitial = createAndLoadInterstitial()
+            interstitial = createAndLoadInterstitial()
         }
         
     }
     
     /// Tells the delegate an ad request succeeded.
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
-        //        //print("interstitialDidReceiveAd")
+        //print("interstitialDidReceiveAd")
     }
     
     /// Tells the delegate an ad request failed.
     func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
-        //        //print("interstitial:didFailToReceiveAdWithError: \(error.localizedDescription)")
+        //print("interstitial:didFailToReceiveAdWithError: \(error.localizedDescription)")
     }
     
     /// Tells the delegate that an interstitial will be presented.
     func interstitialWillPresentScreen(_ ad: GADInterstitial) {
-        //        //print("interstitialWillPresentScreen")
-        
-        pauseBackgroundSound()
+        //print("interstitialWillPresentScreen")
+        // Log Event
+        Analytics.logEvent("ad_gameend_start", parameters: [:])
     }
     
     /// Tells the delegate the interstitial is to be animated off the screen.
     func interstitialWillDismissScreen(_ ad: GADInterstitial) {
-        //        //print("interstitialWillDismissScreen")
+        //print("interstitialWillDismissScreen")
     }
     
     /// Tells the delegate the interstitial had been animated off the screen.
     func interstitialDidDismissScreen(_ ad: GADInterstitial) {
-        //        //print("interstitialDidDismissScreen")
-        if gameMusicOn {
-            resumeBackgroundSound()
-        }
+        //print("interstitialDidDismissScreen")
         
         // Log Event
-        Analytics.logEvent("ad_gameend", parameters: [:])
+        Analytics.logEvent("ad_gameend_finish", parameters: [:])
         interstitial = createAndLoadInterstitial()
     }
     
     /// Tells the delegate that a user click will open another app
     /// (such as the App Store), backgrounding the current app.
     func interstitialWillLeaveApplication(_ ad: GADInterstitial) {
-        //        //print("interstitialWillLeaveApplication")
+        //print("interstitialWillLeaveApplication")
     }
     
     //MARK:- Alert Message
     @objc func displayAlertMessage(notification:NSNotification) {
         if let userInfo = notification.userInfo {
             let message = userInfo["forButton"] as! String
-            //print(message)
             
             // Case 1. display alert view for like
             if message == "like" {
-                let alertController = UIAlertController(title: "Enjoy Balls vs Cups?", message: "Please rate the game to support us. Thank you!", preferredStyle: .alert)
+                let alertController = UIAlertController(title: "Enjoy 2048 Ball Blast?", message: "Please rate the game to support us. Thank you!", preferredStyle: .alert)
                 let actionYes = UIAlertAction(title: "Yes, I like it!", style: .default) {
                     UIAlertAction in
-                    self.rateApp(appId: "id1429459261") { success in
+                    self.rateApp(appId: "id1437084392") { success in
                         //print("RateApp \(success)")
                     }
                 }
@@ -511,12 +473,12 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
             
             // Case 4. buy new ball
             if message == "buyNewBall" {
-                let alertController = UIAlertController(title: "Time for New Ball!", message: "Do you want to buy a new ball for 100 coins?", preferredStyle: .alert)
+                let alertController = UIAlertController(title: "Time for New Skin!", message: "Do you want to buy new skin for 100 coins?", preferredStyle: .alert)
                 let actionYes = UIAlertAction(title: "Yes", style: .default) {
                     UIAlertAction in
                     // purchase succeed
                     if let storeScene = self.skView.scene as? StoreScene {
-                        storeScene.buyANewBall()
+                        storeScene.buyANewMode()
                     }
                 }
                 let actionLater = UIAlertAction(title: "Cancel", style: .cancel) {
@@ -556,11 +518,11 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
             completion(UIApplication.shared.openURL(url))
             return
         }
-        UIApplication.shared.open(url, options: [:], completionHandler: completion)
+        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: completion)
     }
     
     func authenticateLocalPlayer() {
-        let localPlayer = GKLocalPlayer.localPlayer()
+        let localPlayer = GKLocalPlayer.local
         localPlayer.authenticateHandler = {(viewController, error) -> Void in
             
             if (viewController != nil) {
@@ -583,51 +545,39 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate, GADB
         gameCenterViewController.dismiss(animated: true, completion: nil)
     }
     
-    func prepareBackgroundSound() {
-        
-        
-        //if the bgSoundPlayer already exists, stop it and make it nil again
-        if (bgSoundPlayer != nil){
-            bgSoundPlayer!.stop()
-            bgSoundPlayer = nil
-        }
-        
-        //create a URL variable using the name variable and tacking on the "mp3" extension
-//        let fileURL:URL = Bundle.main.url(forResource:"backgroundMusic", withExtension: "mp3")!
-//
-//        do {
-//            bgSoundPlayer = try AVAudioPlayer(contentsOf: fileURL)
-//        } catch _{
-//            bgSoundPlayer = nil
-//
-//        }
-//        bgSoundPlayer!.volume = 0.33 //set the volume anywhere from 0 to 1
-//        bgSoundPlayer!.numberOfLoops = -1 // -1 makes the player loop forever
-//        bgSoundPlayer!.prepareToPlay() //prepare for playback by preloading its buffers.
-        
-    }
-    
-    @objc func pauseBackgroundSound() {
-        //if the bgSoundPlayer isn't nil, then stop it
-        if (bgSoundPlayer != nil){
-            bgSoundPlayer!.stop()
-        }
-    }
-    
-    @objc func resumeBackgroundSound() {
-        //if the bgSoundPlayer isn't nil, then stop it
-        if (bgSoundPlayer != nil){
-            bgSoundPlayer!.play()
-        }
-    }
-    
     func setUpFirstLaunch() {
         UserDefaults.standard.set(false, forKey: "justOpenApp")
         UserDefaults.standard.set(false, forKey: "gameInProgress")
         UserDefaults.standard.set(false, forKey: "noAdsPurchased")
         UserDefaults.standard.set(true, forKey: "launchedBefore")
-        UserDefaults.standard.set("Bright", forKey: "mode")
+        UserDefaults.standard.set(0, forKey: "highScore")
+        UserDefaults.standard.set(0, forKey: "highCombo")
+        UserDefaults.standard.set(1, forKey: "highBallNum")
+        UserDefaults.standard.set("Simple", forKey: "mode")
+        
+        // configure default balls
+        let Mode0 = ModeItem(identifier: "Simple", isBought: true)
+        let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: Mode0)
+        UserDefaults.standard.set(encodedData, forKey: "Simple")
+        UserDefaults.standard.set(encodedData, forKey: "SelectedMode")
         
         
+        // configure mode library
+        configureModeItem(key: "Modern")
+        configureModeItem(key: "Warm")
+        configureModeItem(key: "Bright")
+        configureModeItem(key: "Dark")
+        configureModeItem(key: "Mint")
     }
+    
+    func configureModeItem(key keyTemp: String) {
+        let aModeItem = ModeItem(identifier: keyTemp, isBought: false)
+        let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: aModeItem)
+        UserDefaults.standard.set(encodedData, forKey: keyTemp)
+    }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

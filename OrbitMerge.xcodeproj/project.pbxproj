@@ -8,6 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		19ADD4C0BD6E0185E12AC83B /* Pods_OrbitMerge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */; };
+		4E0DC664214F382D00B1AB31 /* Merge_matching_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC65B214F382B00B1AB31 /* Merge_matching_5.wav */; };
+		4E0DC665214F382D00B1AB31 /* Merge_matching_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC65C214F382B00B1AB31 /* Merge_matching_4.wav */; };
+		4E0DC666214F382D00B1AB31 /* Merge_matching_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC65D214F382B00B1AB31 /* Merge_matching_8.wav */; };
+		4E0DC667214F382D00B1AB31 /* Merge_matching_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC65E214F382C00B1AB31 /* Merge_matching_2.wav */; };
+		4E0DC668214F382D00B1AB31 /* Merge_matching_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC65F214F382C00B1AB31 /* Merge_matching_6.wav */; };
+		4E0DC669214F382D00B1AB31 /* Merge_matching_9.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC660214F382C00B1AB31 /* Merge_matching_9.wav */; };
+		4E0DC66A214F382D00B1AB31 /* Merge_matching_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC661214F382D00B1AB31 /* Merge_matching_1.wav */; };
+		4E0DC66B214F382D00B1AB31 /* Merge_matching_7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC662214F382D00B1AB31 /* Merge_matching_7.wav */; };
+		4E0DC66C214F382D00B1AB31 /* Merge_matching_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC663214F382D00B1AB31 /* Merge_matching_3.wav */; };
+		4E0DC671214F44C500B1AB31 /* ballHitCircle.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC66F214F44C500B1AB31 /* ballHitCircle.wav */; };
+		4E0DC674214F473600B1AB31 /* ballShoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC673214F473600B1AB31 /* ballShoot.wav */; };
+		4E0DC676214F561200B1AB31 /* gameStart.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC675214F561100B1AB31 /* gameStart.wav */; };
+		4E0DC67E214F5EFF00B1AB31 /* gameStart.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4E0DC67D214F5EFF00B1AB31 /* gameStart.mp3 */; };
 		4E1531F721478A08007FB554 /* ComboNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1531F621478A08007FB554 /* ComboNode.swift */; };
 		4E1531FA21478FF6007FB554 /* truenoexbd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531F921478FF6007FB554 /* truenoexbd.otf */; };
 		4E1531FC21479005007FB554 /* truenoblk.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E1531FB21479004007FB554 /* truenoblk.otf */; };
@@ -33,15 +46,9 @@
 		4E3014BF2133AB1300D74E84 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014BD2133AB1300D74E84 /* LaunchScreen.storyboard */; };
 		4E3014C92133ACA500D74E84 /* DefaultValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014C82133ACA500D74E84 /* DefaultValues.swift */; };
 		4E3014CB2133ACAD00D74E84 /* MyUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014CA2133ACAD00D74E84 /* MyUtils.swift */; };
-		4E3014CD2133AE3700D74E84 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */; };
-		4E3014CF2133AEDD00D74E84 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014CE2133AEDD00D74E84 /* StoreScene.swift */; };
 		4E3014D12133AF3000D74E84 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D02133AF3000D74E84 /* IAPHelper.swift */; };
-		4E3014D42133AF3B00D74E84 /* IAPItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D22133AF3B00D74E84 /* IAPItem.swift */; };
 		4E3014D52133AF3B00D74E84 /* IAPProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D32133AF3B00D74E84 /* IAPProducts.swift */; };
-		4E3014D72133AF4E00D74E84 /* ShopSelectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */; };
-		4E3014D92133AF5500D74E84 /* StoreItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014D82133AF5500D74E84 /* StoreItem.swift */; };
 		4E3014DB2133AF5B00D74E84 /* StoreReviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */; };
-		4E3014DD2133AF6800D74E84 /* WatchVideoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */; };
 		4E3014DF2133B08400D74E84 /* BallNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014DE2133B08400D74E84 /* BallNode.swift */; };
 		4E3014E12133B08900D74E84 /* ControlButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E02133B08900D74E84 /* ControlButtonNode.swift */; };
 		4E3014E32133B09B00D74E84 /* MessageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E22133B09A00D74E84 /* MessageNode.swift */; };
@@ -49,13 +56,34 @@
 		4E3014E72133B0B700D74E84 /* CoinNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E62133B0B700D74E84 /* CoinNode.swift */; };
 		4E3014E92133B2C700D74E84 /* MenuButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014E82133B2C700D74E84 /* MenuButtonNode.swift */; };
 		4E3014EC2133B3AE00D74E84 /* buttonPressed.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */; };
-		4E3014EE2133B4C400D74E84 /* BallItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014ED2133B4C300D74E84 /* BallItem.swift */; };
 		4E3014F02133B6E800D74E84 /* AdsVideoNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3014EF2133B6E700D74E84 /* AdsVideoNode.swift */; };
 		4E5E537A2146436A0033A4E2 /* TopBarNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E53792146436A0033A4E2 /* TopBarNode.swift */; };
+		4E6E75562150A3F30033976E /* ballFail.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4E6E75552150A3F30033976E /* ballFail.wav */; };
+		4E7E3B19214DACD9009694AB /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7E3B18214DACD9009694AB /* MenuScene.swift */; };
+		4ECF245122040DF000442B90 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4ECF245022040DF000442B90 /* GoogleService-Info.plist */; };
+		4ED55DE22158742300F943C2 /* AudioSessionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ED55DE12158742300F943C2 /* AudioSessionHelper.m */; };
+		4EEDFEA121F83556002B9B62 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDFEA021F83556002B9B62 /* StoreScene.swift */; };
+		4EEDFEA421F835DA002B9B62 /* WatchVideoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDFEA221F835D9002B9B62 /* WatchVideoItem.swift */; };
+		4EEDFEA521F835DA002B9B62 /* StoreItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDFEA321F835D9002B9B62 /* StoreItem.swift */; };
+		4EEDFEA921F838A7002B9B62 /* ModeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEDFEA821F838A7002B9B62 /* ModeItem.swift */; };
+		4EEDFEAB21FAE4D4002B9B62 /* addCoins.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 4EEDFEAA21FAE4D4002B9B62 /* addCoins.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08098BF5255380A378D827D4 /* Pods-OrbitMerge.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OrbitMerge.release.xcconfig"; path = "Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge.release.xcconfig"; sourceTree = "<group>"; };
+		4E0DC65B214F382B00B1AB31 /* Merge_matching_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_5.wav; sourceTree = "<group>"; };
+		4E0DC65C214F382B00B1AB31 /* Merge_matching_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_4.wav; sourceTree = "<group>"; };
+		4E0DC65D214F382B00B1AB31 /* Merge_matching_8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_8.wav; sourceTree = "<group>"; };
+		4E0DC65E214F382C00B1AB31 /* Merge_matching_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_2.wav; sourceTree = "<group>"; };
+		4E0DC65F214F382C00B1AB31 /* Merge_matching_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_6.wav; sourceTree = "<group>"; };
+		4E0DC660214F382C00B1AB31 /* Merge_matching_9.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_9.wav; sourceTree = "<group>"; };
+		4E0DC661214F382D00B1AB31 /* Merge_matching_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_1.wav; sourceTree = "<group>"; };
+		4E0DC662214F382D00B1AB31 /* Merge_matching_7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_7.wav; sourceTree = "<group>"; };
+		4E0DC663214F382D00B1AB31 /* Merge_matching_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Merge_matching_3.wav; sourceTree = "<group>"; };
+		4E0DC66F214F44C500B1AB31 /* ballHitCircle.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ballHitCircle.wav; sourceTree = "<group>"; };
+		4E0DC673214F473600B1AB31 /* ballShoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ballShoot.wav; sourceTree = "<group>"; };
+		4E0DC675214F561100B1AB31 /* gameStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameStart.wav; sourceTree = "<group>"; };
+		4E0DC67D214F5EFF00B1AB31 /* gameStart.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gameStart.mp3; sourceTree = "<group>"; };
 		4E1531F621478A08007FB554 /* ComboNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboNode.swift; sourceTree = "<group>"; };
 		4E1531F921478FF6007FB554 /* truenoexbd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenoexbd.otf; sourceTree = "<group>"; };
 		4E1531FB21479004007FB554 /* truenoblk.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = truenoblk.otf; sourceTree = "<group>"; };
@@ -83,15 +111,9 @@
 		4E3014C02133AB1300D74E84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E3014C82133ACA500D74E84 /* DefaultValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultValues.swift; sourceTree = "<group>"; };
 		4E3014CA2133ACAD00D74E84 /* MyUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyUtils.swift; sourceTree = "<group>"; };
-		4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		4E3014CE2133AEDD00D74E84 /* StoreScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
 		4E3014D02133AF3000D74E84 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
-		4E3014D22133AF3B00D74E84 /* IAPItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPItem.swift; sourceTree = "<group>"; };
 		4E3014D32133AF3B00D74E84 /* IAPProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPProducts.swift; sourceTree = "<group>"; };
-		4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopSelectionItem.swift; sourceTree = "<group>"; };
-		4E3014D82133AF5500D74E84 /* StoreItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreItem.swift; sourceTree = "<group>"; };
 		4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreReviewHelper.swift; sourceTree = "<group>"; };
-		4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchVideoItem.swift; sourceTree = "<group>"; };
 		4E3014DE2133B08400D74E84 /* BallNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallNode.swift; sourceTree = "<group>"; };
 		4E3014E02133B08900D74E84 /* ControlButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControlButtonNode.swift; sourceTree = "<group>"; };
 		4E3014E22133B09A00D74E84 /* MessageNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageNode.swift; sourceTree = "<group>"; };
@@ -99,9 +121,20 @@
 		4E3014E62133B0B700D74E84 /* CoinNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoinNode.swift; sourceTree = "<group>"; };
 		4E3014E82133B2C700D74E84 /* MenuButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuButtonNode.swift; sourceTree = "<group>"; };
 		4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonPressed.wav; sourceTree = "<group>"; };
-		4E3014ED2133B4C300D74E84 /* BallItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BallItem.swift; sourceTree = "<group>"; };
 		4E3014EF2133B6E700D74E84 /* AdsVideoNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdsVideoNode.swift; sourceTree = "<group>"; };
 		4E5E53792146436A0033A4E2 /* TopBarNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBarNode.swift; sourceTree = "<group>"; };
+		4E6E75552150A3F30033976E /* ballFail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ballFail.wav; sourceTree = "<group>"; };
+		4E7E3B18214DACD9009694AB /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
+		4ECF245022040DF000442B90 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4ED55DDE21586BD800F943C2 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4ED55DE02158742300F943C2 /* OrbitMerge-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OrbitMerge-Bridging-Header.h"; sourceTree = "<group>"; };
+		4ED55DE12158742300F943C2 /* AudioSessionHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioSessionHelper.m; sourceTree = "<group>"; };
+		4ED55DE32158743700F943C2 /* AudioSessionHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionHelper.h; sourceTree = "<group>"; };
+		4EEDFEA021F83556002B9B62 /* StoreScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
+		4EEDFEA221F835D9002B9B62 /* WatchVideoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchVideoItem.swift; sourceTree = "<group>"; };
+		4EEDFEA321F835D9002B9B62 /* StoreItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreItem.swift; sourceTree = "<group>"; };
+		4EEDFEA821F838A7002B9B62 /* ModeItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModeItem.swift; sourceTree = "<group>"; };
+		4EEDFEAA21FAE4D4002B9B62 /* addCoins.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = addCoins.m4a; sourceTree = "<group>"; };
 		D089478DAE2B57DA3B27FAFC /* Pods-OrbitMerge.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OrbitMerge.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge.debug.xcconfig"; sourceTree = "<group>"; };
 		F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OrbitMerge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -130,6 +163,7 @@
 		2FB1ADF88A176C9214AA83B9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4ED55DDE21586BD800F943C2 /* FirebaseCore.framework */,
 				F3D8A98D2BEBF22436296FC3 /* Pods_OrbitMerge.framework */,
 			);
 			name = Frameworks;
@@ -177,13 +211,14 @@
 			isa = PBXGroup;
 			children = (
 				4E3014B62133AB1200D74E84 /* GameViewController.swift */,
+				4E7E3B18214DACD9009694AB /* MenuScene.swift */,
 				4E3014B42133AB1200D74E84 /* GameScene.swift */,
-				4E3014CE2133AEDD00D74E84 /* StoreScene.swift */,
+				4EEDFEA021F83556002B9B62 /* StoreScene.swift */,
 				4E3014C62133AB3F00D74E84 /* Nodes */,
 				4E3014C72133AB4900D74E84 /* Misc */,
 				4E3014BB2133AB1300D74E84 /* Assets.xcassets */,
 				4E3014C02133AB1300D74E84 /* Info.plist */,
-				4E3014CC2133AE3700D74E84 /* GoogleService-Info.plist */,
+				4ECF245022040DF000442B90 /* GoogleService-Info.plist */,
 			);
 			path = OrbitMerge;
 			sourceTree = "<group>";
@@ -212,17 +247,18 @@
 				4E3014CA2133ACAD00D74E84 /* MyUtils.swift */,
 				4E3014D02133AF3000D74E84 /* IAPHelper.swift */,
 				4E3014D32133AF3B00D74E84 /* IAPProducts.swift */,
-				4E3014ED2133B4C300D74E84 /* BallItem.swift */,
-				4E3014D82133AF5500D74E84 /* StoreItem.swift */,
-				4E3014D22133AF3B00D74E84 /* IAPItem.swift */,
-				4E3014DC2133AF6800D74E84 /* WatchVideoItem.swift */,
-				4E3014D62133AF4E00D74E84 /* ShopSelectionItem.swift */,
 				4E3014DA2133AF5B00D74E84 /* StoreReviewHelper.swift */,
+				4EEDFEA821F838A7002B9B62 /* ModeItem.swift */,
+				4EEDFEA321F835D9002B9B62 /* StoreItem.swift */,
+				4EEDFEA221F835D9002B9B62 /* WatchVideoItem.swift */,
 				4E3014AE2133AB1200D74E84 /* AppDelegate.swift */,
+				4ED55DE32158743700F943C2 /* AudioSessionHelper.h */,
+				4ED55DE12158742300F943C2 /* AudioSessionHelper.m */,
 				4E3014B82133AB1200D74E84 /* Main.storyboard */,
 				4E3014BD2133AB1300D74E84 /* LaunchScreen.storyboard */,
 				4E1531F821478FA4007FB554 /* Fonts */,
 				4E3014EA2133B38F00D74E84 /* Sound */,
+				4ED55DE02158742300F943C2 /* OrbitMerge-Bridging-Header.h */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -230,9 +266,24 @@
 		4E3014EA2133B38F00D74E84 /* Sound */ = {
 			isa = PBXGroup;
 			children = (
+				4EEDFEAA21FAE4D4002B9B62 /* addCoins.m4a */,
 				4E3014EB2133B3AE00D74E84 /* buttonPressed.wav */,
 				4E1532652149D631007FB554 /* newBestScore.wav */,
+				4E0DC675214F561100B1AB31 /* gameStart.wav */,
+				4E0DC67D214F5EFF00B1AB31 /* gameStart.mp3 */,
 				4E15327B214A0BFF007FB554 /* gameOver.wav */,
+				4E6E75552150A3F30033976E /* ballFail.wav */,
+				4E0DC673214F473600B1AB31 /* ballShoot.wav */,
+				4E0DC66F214F44C500B1AB31 /* ballHitCircle.wav */,
+				4E0DC661214F382D00B1AB31 /* Merge_matching_1.wav */,
+				4E0DC65E214F382C00B1AB31 /* Merge_matching_2.wav */,
+				4E0DC663214F382D00B1AB31 /* Merge_matching_3.wav */,
+				4E0DC65C214F382B00B1AB31 /* Merge_matching_4.wav */,
+				4E0DC65B214F382B00B1AB31 /* Merge_matching_5.wav */,
+				4E0DC65F214F382C00B1AB31 /* Merge_matching_6.wav */,
+				4E0DC662214F382D00B1AB31 /* Merge_matching_7.wav */,
+				4E0DC65D214F382B00B1AB31 /* Merge_matching_8.wav */,
+				4E0DC660214F382C00B1AB31 /* Merge_matching_9.wav */,
 			);
 			path = Sound;
 			sourceTree = "<group>";
@@ -272,6 +323,7 @@
 				TargetAttributes = {
 					4E3014AA2133AB1200D74E84 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -298,24 +350,39 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E0DC668214F382D00B1AB31 /* Merge_matching_6.wav in Resources */,
+				4E0DC666214F382D00B1AB31 /* Merge_matching_8.wav in Resources */,
 				4E15321A214794B8007FB554 /* Montserrat-Regular.ttf in Resources */,
 				4E1532662149D631007FB554 /* newBestScore.wav in Resources */,
+				4E0DC667214F382D00B1AB31 /* Merge_matching_2.wav in Resources */,
+				4E0DC66C214F382D00B1AB31 /* Merge_matching_3.wav in Resources */,
 				4E1532022147902F007FB554 /* truenobd.otf in Resources */,
 				4E1531FC21479005007FB554 /* truenoblk.otf in Resources */,
 				4E153226214794B8007FB554 /* Montserrat-ExtraBold.ttf in Resources */,
 				4E1531FE21479010007FB554 /* truenorg.otf in Resources */,
 				4E153225214794B8007FB554 /* Montserrat-SemiBold.ttf in Resources */,
+				4E0DC671214F44C500B1AB31 /* ballHitCircle.wav in Resources */,
 				4E15320021479022007FB554 /* truenosbd.otf in Resources */,
 				4E3014BA2133AB1200D74E84 /* Main.storyboard in Resources */,
-				4E3014CD2133AE3700D74E84 /* GoogleService-Info.plist in Resources */,
+				4E6E75562150A3F30033976E /* ballFail.wav in Resources */,
 				4E15321C214794B8007FB554 /* Montserrat-Thin.ttf in Resources */,
+				4EEDFEAB21FAE4D4002B9B62 /* addCoins.m4a in Resources */,
+				4E0DC669214F382D00B1AB31 /* Merge_matching_9.wav in Resources */,
+				4E0DC676214F561200B1AB31 /* gameStart.wav in Resources */,
+				4E0DC665214F382D00B1AB31 /* Merge_matching_4.wav in Resources */,
+				4E0DC674214F473600B1AB31 /* ballShoot.wav in Resources */,
+				4E0DC66B214F382D00B1AB31 /* Merge_matching_7.wav in Resources */,
 				4E3014BC2133AB1300D74E84 /* Assets.xcassets in Resources */,
 				4E3014BF2133AB1300D74E84 /* LaunchScreen.storyboard in Resources */,
+				4E0DC66A214F382D00B1AB31 /* Merge_matching_1.wav in Resources */,
 				4E153224214794B8007FB554 /* Montserrat-Black.ttf in Resources */,
 				4E15327C214A0BFF007FB554 /* gameOver.wav in Resources */,
+				4E0DC664214F382D00B1AB31 /* Merge_matching_5.wav in Resources */,
+				4ECF245122040DF000442B90 /* GoogleService-Info.plist in Resources */,
 				4E3014EC2133B3AE00D74E84 /* buttonPressed.wav in Resources */,
 				4E153215214794B8007FB554 /* Montserrat-Bold.ttf in Resources */,
 				4E15321D214794B8007FB554 /* Montserrat-Light.ttf in Resources */,
+				4E0DC67E214F5EFF00B1AB31 /* gameStart.mp3 in Resources */,
 				4E1531FA21478FF6007FB554 /* truenoexbd.otf in Resources */,
 				4E153221214794B8007FB554 /* Montserrat-Medium.ttf in Resources */,
 			);
@@ -349,11 +416,11 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-OrbitMerge/Pods-OrbitMerge-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInAppMessaging/InAppMessagingResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInAppMessagingDisplay/InAppMessagingDisplayResources.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InAppMessagingResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InAppMessagingDisplayResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -389,26 +456,26 @@
 			files = (
 				4E3014B52133AB1200D74E84 /* GameScene.swift in Sources */,
 				4E3014E92133B2C700D74E84 /* MenuButtonNode.swift in Sources */,
-				4E3014D72133AF4E00D74E84 /* ShopSelectionItem.swift in Sources */,
-				4E3014D42133AF3B00D74E84 /* IAPItem.swift in Sources */,
+				4EEDFEA521F835DA002B9B62 /* StoreItem.swift in Sources */,
+				4EEDFEA121F83556002B9B62 /* StoreScene.swift in Sources */,
 				4E3014CB2133ACAD00D74E84 /* MyUtils.swift in Sources */,
-				4E3014CF2133AEDD00D74E84 /* StoreScene.swift in Sources */,
 				4E3014DB2133AF5B00D74E84 /* StoreReviewHelper.swift in Sources */,
-				4E3014EE2133B4C400D74E84 /* BallItem.swift in Sources */,
 				4E3014E72133B0B700D74E84 /* CoinNode.swift in Sources */,
 				4E3014E12133B08900D74E84 /* ControlButtonNode.swift in Sources */,
 				4E3014E52133B0AB00D74E84 /* ZLSpriteNode.swift in Sources */,
 				4E3014E32133B09B00D74E84 /* MessageNode.swift in Sources */,
 				4E3014DF2133B08400D74E84 /* BallNode.swift in Sources */,
+				4EEDFEA421F835DA002B9B62 /* WatchVideoItem.swift in Sources */,
 				4E3014D52133AF3B00D74E84 /* IAPProducts.swift in Sources */,
 				4E3014F02133B6E800D74E84 /* AdsVideoNode.swift in Sources */,
 				4E3014B72133AB1200D74E84 /* GameViewController.swift in Sources */,
-				4E3014DD2133AF6800D74E84 /* WatchVideoItem.swift in Sources */,
 				4E3014AF2133AB1200D74E84 /* AppDelegate.swift in Sources */,
+				4EEDFEA921F838A7002B9B62 /* ModeItem.swift in Sources */,
 				4E3014D12133AF3000D74E84 /* IAPHelper.swift in Sources */,
 				4E3014C92133ACA500D74E84 /* DefaultValues.swift in Sources */,
 				4E1532642149D555007FB554 /* NewBestRibbonNode.swift in Sources */,
-				4E3014D92133AF5500D74E84 /* StoreItem.swift in Sources */,
+				4E7E3B19214DACD9009694AB /* MenuScene.swift in Sources */,
+				4ED55DE22158742300F943C2 /* AudioSessionHelper.m in Sources */,
 				4E5E537A2146436A0033A4E2 /* TopBarNode.swift in Sources */,
 				4E1531F721478A08007FB554 /* ComboNode.swift in Sources */,
 			);
@@ -555,6 +622,8 @@
 			baseConfigurationReference = D089478DAE2B57DA3B27FAFC /* Pods-OrbitMerge.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E3TBSL5F4P;
 				INFOPLIST_FILE = OrbitMerge/Info.plist;
@@ -565,7 +634,10 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.RawwrStudios.OrbitMerge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "OrbitMerge/Misc/OrbitMerge-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -575,6 +647,8 @@
 			baseConfigurationReference = 08098BF5255380A378D827D4 /* Pods-OrbitMerge.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E3TBSL5F4P;
 				INFOPLIST_FILE = OrbitMerge/Info.plist;
@@ -585,7 +659,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.RawwrStudios.OrbitMerge;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "OrbitMerge/Misc/OrbitMerge-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

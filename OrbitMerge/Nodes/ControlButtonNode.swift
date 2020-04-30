@@ -1,6 +1,6 @@
 //
 //  ControlButtonNode.swift
-//  BallvsCup
+//  OrbitMerge
 //
 //  Created by Alan Lou on 8/8/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -14,10 +14,7 @@ protocol ControlButtonDelegate: NSObjectProtocol {
 }
 
 struct ControlButtonType {
-    static let PauseButton:  String = "PauseButton"
-    static let SettingButton:  String = "SettingButton"
     static let BackButton:  String = "BackButton"
-    static let InfoButton:  String = "Info"
 }
 
 class ControlButtonNode: SKSpriteNode {

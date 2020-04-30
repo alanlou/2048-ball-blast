@@ -7,7 +7,6 @@
 //
 
 import UIKit
-//import GoogleMobileAds
 import AVFoundation
 import Firebase
 
@@ -16,8 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Use Firebase library to configure APIs.
         FirebaseApp.configure()
         
@@ -26,10 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GADMobileAds.configure(withApplicationID: "ca-app-pub-5422633750847690~1384510659")
         
         // do not surpress background music
-        do
-        {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-            try AVAudioSession.sharedInstance().setActive(true)
+        do {
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+            } else {
+                // the following line is now "unavailable", hence there is no way to support iOS <10 with swift 4.2
+                try AudioSessionHelper.setAudioSession()
+            }
         } catch let error as NSError
         {
             print(error)
@@ -63,3 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
+}

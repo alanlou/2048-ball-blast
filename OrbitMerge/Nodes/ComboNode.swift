@@ -19,7 +19,7 @@ class ComboNode: SKLabelNode {
         text = "x\(combo)"
         fontName = FontNameType.Montserrat_SemiBold
         fontSize = 150
-        fontColor = SKColor.white
+        fontColor = ColorCategory.getTextFontColor()
         alpha = 1.0
         zPosition = 100
         horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right

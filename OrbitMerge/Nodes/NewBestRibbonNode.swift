@@ -1,6 +1,6 @@
 //
 //  NewBestRibbonNode.swift
-//  Squares
+//  OrbitMerge
 //
 //  Created by Alan Lou on 1/4/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.

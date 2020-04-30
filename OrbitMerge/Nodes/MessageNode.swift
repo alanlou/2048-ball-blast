@@ -1,6 +1,6 @@
 //
 //  MessageNode.swift
-//  BreakoutDraw
+//  OrbitMerge
 //
 //  Created by Alan Lou on 7/15/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
@@ -33,7 +33,7 @@ class MessageNode: SKLabelNode {
         text = message
         fontName = FontNameType.Montserrat_Bold
         fontSize = 16
-        fontColor = ColorCategory.getMessageFontColor()
+        fontColor = ColorCategory.getTextFontColor()
         zPosition = 2000
         horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         verticalAlignmentMode = SKLabelVerticalAlignmentMode.center
@@ -44,7 +44,7 @@ class MessageNode: SKLabelNode {
         text = message
         self.fontName = fontName
         fontSize = 16
-        fontColor = ColorCategory.getMessageFontColor()
+        fontColor = ColorCategory.getTextFontColor()
         zPosition = 2000
         horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         verticalAlignmentMode = SKLabelVerticalAlignmentMode.center
@@ -79,6 +79,23 @@ class MessageNode: SKLabelNode {
     
     func setText(to text: String){
         self.text = text
+    }
+    
+    func setCoinNumber(to text: String){
+        // animate the update
+        let duration = 0.14
+        let updateText = SKAction.run() { [weak self] in
+            self?.text = text
+        }
+        let scaleXDown = SKAction.scaleX(to: 0.8, duration: duration)
+        let scaleXUp = SKAction.scaleX(to: 1.2, duration: duration)
+        let scaleXBack = SKAction.scaleX(to: 1.0, duration: duration/2)
+        let scaleDown = SKAction.scale(to: 0.8, duration: duration)
+        let scaleBack = SKAction.scale(to: 1.0, duration: duration/2)
+        self.run(SKAction.sequence([updateText,
+                                    SKAction.group([scaleXDown, scaleDown]),
+                                    SKAction.group([scaleBack, scaleXUp]),
+                                    scaleXBack]))
     }
     
     func setScore(to text: String){

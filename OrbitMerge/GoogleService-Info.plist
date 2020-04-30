@@ -36,5 +36,7 @@
 	<string>1:275871972:ios:d1b044db229df828</string>
 	<key>DATABASE_URL</key>
 	<string>https://orbit-merge.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-5422633750847690~1384510659</string>
 </dict>
 </plist>

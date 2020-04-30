@@ -1,6 +1,6 @@
 //
 //  ZLSpriteNode.swift
-//  BallvsCup
+//  OrbitMerge
 //
 //  Created by Alan Lou on 8/4/18.
 //  Copyright © 2018 Rawwr Studios. All rights reserved.
