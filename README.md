@@ -13,5 +13,6 @@ How the balls merge:
 2 + 2 = 4, 4 + 4 = 8, 8 + 8 = 16, etc until 1024 + 1024 = 2048 or more.
 
 **GAMEPLAY:**
+
 <a href="https://www.youtube.com/watch?v=TSNTWcIc-Ko" target="_blank"><img src="https://img.youtube.com/vi/TSNTWcIc-Ko/hqdefault.jpg" border="10" /></a>
 
