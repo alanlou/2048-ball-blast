@@ -1,8 +1,8 @@
-# 2048 Ball Blast for iOS
-Full source code of an 'iOS' game, 2048 Ball Blast, written in Swift using SpriteKit.
+![iOS New Games We Love](/Misc/NewGamesWeLove.jpg)
 
-Featured by Apple as *New Games We Love* in more than 20 countries. 
-![GitHub Logo](/Misc/NewGamesWeLove.jpg)
+# 2048 Ball Blast for iOS
+Full source code of an 'iOS' game, 2048 Ball Blast, written in Swift using SpriteKit. This game is featured by Apple as **New Games We Love** in more than 20 countries. 
+
 
 
 HOW TO PLAY:
